@@ -8,12 +8,10 @@ namespace BeautySalon.Domain.Data;
 /// </summary>
 public static class BeautySalonData
 {
-    private static readonly DateTime Today = DateTime.Today;
-
     /// <summary>
-    /// Клиенты салона
+    /// Посетители салона
     /// </summary>
-    public static List<Client> Clients { get; } =
+    public static List<Customer> Customers { get; } =
     [
         new() { Id = 1, LastName = "Иванов", FirstName = "Иван", Patronymic = "Сергеевич", Gender = Gender.Male, DateOfBirth = new DateOnly(1998, 2, 14), PhoneNumber = "+79000000001" },
         new() { Id = 2, LastName = "Петрова", FirstName = "Анна", Patronymic = "Игоревна", Gender = Gender.Female, DateOfBirth = new DateOnly(1995, 6, 21), PhoneNumber = "+79000000002" },
@@ -28,20 +26,20 @@ public static class BeautySalonData
     ];
 
     /// <summary>
-    /// Мастера салона
+    /// Специалисты салона
     /// </summary>
-    public static List<Master> Masters { get; } =
+    public static List<BeautySpecialist> Specialists { get; } =
     [
-        new() { Id = 1, LastName = "Крылова", FirstName = "Алина", Patronymic = "Павловна", Gender = Gender.Female, DateOfBirth = new DateOnly(1990, 2, 11), PassportNumber = "4501000001", Specialization = "Парикмахер", WorkExperience = 3 },
-        new() { Id = 2, LastName = "Семенова", FirstName = "Ирина", Patronymic = "Владимировна", Gender = Gender.Female, DateOfBirth = new DateOnly(1988, 5, 19), PassportNumber = "4501000002", Specialization = "Колорист", WorkExperience = 5 },
-        new() { Id = 3, LastName = "Михайлов", FirstName = "Роман", Patronymic = "Ильич", Gender = Gender.Male, DateOfBirth = new DateOnly(1987, 9, 4), PassportNumber = "4501000003", Specialization = "Барбер", WorkExperience = 7 },
-        new() { Id = 4, LastName = "Белова", FirstName = "Екатерина", Patronymic = "Олеговна", Gender = Gender.Female, DateOfBirth = new DateOnly(1992, 1, 27), PassportNumber = "4501000004", Specialization = "Мастер маникюра", WorkExperience = 9 },
-        new() { Id = 5, LastName = "Зайцев", FirstName = "Денис", Patronymic = "Андреевич", Gender = Gender.Male, DateOfBirth = new DateOnly(1985, 6, 8), PassportNumber = "4501000005", Specialization = "Массажист", WorkExperience = 12 },
-        new() { Id = 6, LastName = "Орлова", FirstName = "Марина", Patronymic = "Игоревна", Gender = Gender.Female, DateOfBirth = new DateOnly(1991, 10, 15), PassportNumber = "4501000006", Specialization = "Бровист", WorkExperience = 4 },
-        new() { Id = 7, LastName = "Громов", FirstName = "Николай", Patronymic = "Сергеевич", Gender = Gender.Male, DateOfBirth = new DateOnly(1986, 12, 22), PassportNumber = "4501000007", Specialization = "Парикмахер", WorkExperience = 6 },
-        new() { Id = 8, LastName = "Власова", FirstName = "Светлана", Patronymic = "Алексеевна", Gender = Gender.Female, DateOfBirth = new DateOnly(1993, 4, 16), PassportNumber = "4501000008", Specialization = "Визажист", WorkExperience = 8 },
-        new() { Id = 9, LastName = "Фролов", FirstName = "Евгений", Patronymic = "Максимович", Gender = Gender.Male, DateOfBirth = new DateOnly(1989, 7, 7), PassportNumber = "4501000009", Specialization = "Массажист", WorkExperience = 10 },
-        new() { Id = 10, LastName = "Романова", FirstName = "Дарья", Patronymic = "Артемовна", Gender = Gender.Female, DateOfBirth = new DateOnly(1996, 3, 13), PassportNumber = "4501000010", Specialization = "Мастер маникюра", WorkExperience = 2 }
+        new() { Id = 1, LastName = "Крылова", FirstName = "Алина", Patronymic = "Павловна", Gender = Gender.Female, DateOfBirth = new DateOnly(1990, 2, 11), PhoneNumber = "+79010000001", PassportNumber = "4501000001", Specialization = "Парикмахер", WorkExperience = 3 },
+        new() { Id = 2, LastName = "Семенова", FirstName = "Ирина", Patronymic = "Владимировна", Gender = Gender.Female, DateOfBirth = new DateOnly(1988, 5, 19), PhoneNumber = "+79010000002", PassportNumber = "4501000002", Specialization = "Колорист", WorkExperience = 5 },
+        new() { Id = 3, LastName = "Михайлов", FirstName = "Роман", Patronymic = "Ильич", Gender = Gender.Male, DateOfBirth = new DateOnly(1987, 9, 4), PhoneNumber = "+79010000003", PassportNumber = "4501000003", Specialization = "Барбер", WorkExperience = 7 },
+        new() { Id = 4, LastName = "Белова", FirstName = "Екатерина", Patronymic = "Олеговна", Gender = Gender.Female, DateOfBirth = new DateOnly(1992, 1, 27), PhoneNumber = "+79010000004", PassportNumber = "4501000004", Specialization = "Мастер маникюра", WorkExperience = 9 },
+        new() { Id = 5, LastName = "Зайцев", FirstName = "Денис", Patronymic = "Андреевич", Gender = Gender.Male, DateOfBirth = new DateOnly(1985, 6, 8), PhoneNumber = "+79010000005", PassportNumber = "4501000005", Specialization = "Массажист", WorkExperience = 12 },
+        new() { Id = 6, LastName = "Орлова", FirstName = "Марина", Patronymic = "Игоревна", Gender = Gender.Female, DateOfBirth = new DateOnly(1991, 10, 15), PhoneNumber = "+79010000006", PassportNumber = "4501000006", Specialization = "Бровист", WorkExperience = 4 },
+        new() { Id = 7, LastName = "Громов", FirstName = "Николай", Patronymic = "Сергеевич", Gender = Gender.Male, DateOfBirth = new DateOnly(1986, 12, 22), PhoneNumber = "+79010000007", PassportNumber = "4501000007", Specialization = "Парикмахер", WorkExperience = 6 },
+        new() { Id = 8, LastName = "Власова", FirstName = "Светлана", Patronymic = "Алексеевна", Gender = Gender.Female, DateOfBirth = new DateOnly(1993, 4, 16), PhoneNumber = "+79010000008", PassportNumber = "4501000008", Specialization = "Визажист", WorkExperience = 8 },
+        new() { Id = 9, LastName = "Фролов", FirstName = "Евгений", Patronymic = "Максимович", Gender = Gender.Male, DateOfBirth = new DateOnly(1989, 7, 7), PhoneNumber = "+79010000009", PassportNumber = "4501000009", Specialization = "Массажист", WorkExperience = 10 },
+        new() { Id = 10, LastName = "Романова", FirstName = "Дарья", Patronymic = "Артемовна", Gender = Gender.Female, DateOfBirth = new DateOnly(1996, 3, 13), PhoneNumber = "+79010000010", PassportNumber = "4501000010", Specialization = "Мастер маникюра", WorkExperience = 2 }
     ];
 
     /// <summary>
@@ -62,63 +60,52 @@ public static class BeautySalonData
     ];
 
     /// <summary>
-    /// Записи клиентов на услуги
+    /// Записи посетителей на услуги
     /// </summary>
     public static List<Appointment> Appointments { get; } =
     [
-        // Мастер 2: четыре записи в текущем месяце с двумя свободными промежутками
-        new() { Id = 1, Client = Clients[0], Master = Masters[1], Service = Services[0], AppointmentDateTime = Day(2, 9, 0), IsRegularClient = true },
-        new() { Id = 2, Client = Clients[1], Master = Masters[1], Service = Services[3], AppointmentDateTime = Day(2, 11, 0), IsRegularClient = true },
-        new() { Id = 3, Client = Clients[2], Master = Masters[1], Service = Services[2], AppointmentDateTime = Day(2, 15, 0), IsRegularClient = false },
-        new() { Id = 4, Client = Clients[3], Master = Masters[1], Service = Services[0], AppointmentDateTime = Day(2, 17, 30), IsRegularClient = false },
+        new() { Id = 1, Customer = Customers[0], Specialist = Specialists[1], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(2).AddHours(9), IsRegularCustomer = true },
+        new() { Id = 2, Customer = Customers[1], Specialist = Specialists[1], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(2).AddHours(12), IsRegularCustomer = true },
+        new() { Id = 3, Customer = Customers[2], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(2).AddHours(17), IsRegularCustomer = false },
+        new() { Id = 4, Customer = Customers[3], Specialist = Specialists[1], Service = Services[6], AppointmentDateTime = DateTime.Today.AddDays(2).AddHours(20), IsRegularCustomer = false },
 
-        // Популярность услуг: услуга 1 - 8 записей, услуга 4 - 6, услуга 2 - 5, услуга 6 - 4, услуга 7 - 3
-        new() { Id = 5, Client = Clients[0], Master = Masters[0], Service = Services[0], AppointmentDateTime = Day(-40, 10, 0), IsRegularClient = true },
-        new() { Id = 6, Client = Clients[4], Master = Masters[2], Service = Services[0], AppointmentDateTime = Day(-35, 11, 0), IsRegularClient = true },
-        new() { Id = 7, Client = Clients[5], Master = Masters[3], Service = Services[0], AppointmentDateTime = Day(-30, 12, 0), IsRegularClient = false },
-        new() { Id = 8, Client = Clients[6], Master = Masters[6], Service = Services[0], AppointmentDateTime = Day(-25, 13, 0), IsRegularClient = true },
-        new() { Id = 9, Client = Clients[7], Master = Masters[7], Service = Services[0], AppointmentDateTime = Day(-20, 14, 0), IsRegularClient = false },
-        new() { Id = 10, Client = Clients[8], Master = Masters[8], Service = Services[0], AppointmentDateTime = Day(-15, 15, 0), IsRegularClient = true },
-        new() { Id = 11, Client = Clients[9], Master = Masters[0], Service = Services[0], AppointmentDateTime = Day(-10, 16, 0), IsRegularClient = false },
+        new() { Id = 5, Customer = Customers[0], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-10).AddHours(10), IsRegularCustomer = true },
+        new() { Id = 6, Customer = Customers[0], Specialist = Specialists[1], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-20).AddHours(11), IsRegularCustomer = true },
+        new() { Id = 7, Customer = Customers[0], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-25).AddHours(12), IsRegularCustomer = true },
+        new() { Id = 8, Customer = Customers[0], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-45).AddHours(10), IsRegularCustomer = true },
 
-        new() { Id = 12, Client = Clients[1], Master = Masters[3], Service = Services[3], AppointmentDateTime = Day(-32, 10, 0), IsRegularClient = true },
-        new() { Id = 13, Client = Clients[2], Master = Masters[3], Service = Services[3], AppointmentDateTime = Day(-28, 11, 0), IsRegularClient = true },
-        new() { Id = 14, Client = Clients[3], Master = Masters[9], Service = Services[3], AppointmentDateTime = Day(-24, 12, 0), IsRegularClient = false },
-        new() { Id = 15, Client = Clients[4], Master = Masters[3], Service = Services[3], AppointmentDateTime = Day(-18, 13, 0), IsRegularClient = true },
-        new() { Id = 16, Client = Clients[5], Master = Masters[9], Service = Services[3], AppointmentDateTime = Day(-12, 14, 0), IsRegularClient = false },
+        new() { Id = 9, Customer = Customers[1], Specialist = Specialists[3], Service = Services[3], AppointmentDateTime = DateTime.Today.AddDays(-8).AddHours(12), IsRegularCustomer = true },
+        new() { Id = 10, Customer = Customers[1], Specialist = Specialists[3], Service = Services[3], AppointmentDateTime = DateTime.Today.AddDays(-18).AddHours(13), IsRegularCustomer = true },
 
-        new() { Id = 17, Client = Clients[6], Master = Masters[0], Service = Services[1], AppointmentDateTime = Day(-27, 10, 0), IsRegularClient = true },
-        new() { Id = 18, Client = Clients[7], Master = Masters[2], Service = Services[1], AppointmentDateTime = Day(-21, 11, 0), IsRegularClient = true },
-        new() { Id = 19, Client = Clients[8], Master = Masters[6], Service = Services[1], AppointmentDateTime = Day(-16, 12, 0), IsRegularClient = false },
-        new() { Id = 20, Client = Clients[9], Master = Masters[2], Service = Services[1], AppointmentDateTime = Day(-11, 13, 0), IsRegularClient = false },
-        new() { Id = 21, Client = Clients[0], Master = Masters[6], Service = Services[1], AppointmentDateTime = Day(-5, 14, 0), IsRegularClient = true },
+        new() { Id = 11, Customer = Customers[4], Specialist = Specialists[2], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-12).AddHours(14), IsRegularCustomer = true },
+        new() { Id = 12, Customer = Customers[4], Specialist = Specialists[7], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-22).AddHours(15), IsRegularCustomer = true },
 
-        new() { Id = 22, Client = Clients[2], Master = Masters[7], Service = Services[5], AppointmentDateTime = Day(-29, 15, 0), IsRegularClient = true },
-        new() { Id = 23, Client = Clients[3], Master = Masters[7], Service = Services[5], AppointmentDateTime = Day(-22, 16, 0), IsRegularClient = false },
-        new() { Id = 24, Client = Clients[4], Master = Masters[7], Service = Services[5], AppointmentDateTime = Day(-14, 17, 0), IsRegularClient = true },
-        new() { Id = 25, Client = Clients[5], Master = Masters[7], Service = Services[5], AppointmentDateTime = Day(-7, 18, 0), IsRegularClient = false },
+        new() { Id = 13, Customer = Customers[7], Specialist = Specialists[5], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-3).AddHours(10), IsRegularCustomer = true },
+        new() { Id = 14, Customer = Customers[7], Specialist = Specialists[5], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-7).AddHours(11), IsRegularCustomer = true },
+        new() { Id = 15, Customer = Customers[7], Specialist = Specialists[5], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-14).AddHours(12), IsRegularCustomer = true },
+        new() { Id = 16, Customer = Customers[7], Specialist = Specialists[8], Service = Services[8], AppointmentDateTime = DateTime.Today.AddDays(-21).AddHours(13), IsRegularCustomer = true },
 
-        new() { Id = 26, Client = Clients[6], Master = Masters[5], Service = Services[6], AppointmentDateTime = Day(-26, 10, 0), IsRegularClient = true },
-        new() { Id = 27, Client = Clients[7], Master = Masters[5], Service = Services[6], AppointmentDateTime = Day(-13, 11, 0), IsRegularClient = true },
-        new() { Id = 28, Client = Clients[8], Master = Masters[5], Service = Services[6], AppointmentDateTime = Day(-3, 12, 0), IsRegularClient = true },
+        new() { Id = 17, Customer = Customers[3], Specialist = Specialists[4], Service = Services[8], AppointmentDateTime = DateTime.Today.AddDays(-9).AddHours(11), IsRegularCustomer = true },
+        new() { Id = 18, Customer = Customers[8], Specialist = Specialists[0], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-16).AddHours(10), IsRegularCustomer = true },
+        new() { Id = 19, Customer = Customers[8], Specialist = Specialists[2], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-40).AddHours(11), IsRegularCustomer = true },
 
-        // Повторные записи за последний месяц.
-        new() { Id = 29, Client = Clients[0], Master = Masters[1], Service = Services[0], AppointmentDateTime = Day(-20, 9, 0), IsRegularClient = true },
-        new() { Id = 30, Client = Clients[0], Master = Masters[2], Service = Services[1], AppointmentDateTime = Day(-8, 10, 0), IsRegularClient = true },
-        new() { Id = 31, Client = Clients[1], Master = Masters[3], Service = Services[3], AppointmentDateTime = Day(-19, 12, 0), IsRegularClient = true },
-        new() { Id = 32, Client = Clients[1], Master = Masters[9], Service = Services[3], AppointmentDateTime = Day(-4, 15, 0), IsRegularClient = true },
-        new() { Id = 33, Client = Clients[2], Master = Masters[1], Service = Services[2], AppointmentDateTime = Day(-17, 16, 0), IsRegularClient = true },
-        new() { Id = 34, Client = Clients[2], Master = Masters[7], Service = Services[5], AppointmentDateTime = Day(-2, 17, 0), IsRegularClient = true },
+        new() { Id = 20, Customer = Customers[2], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-6).AddHours(16), IsRegularCustomer = true },
+        new() { Id = 21, Customer = Customers[5], Specialist = Specialists[6], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-11).AddHours(10), IsRegularCustomer = true },
+        new() { Id = 22, Customer = Customers[6], Specialist = Specialists[5], Service = Services[6], AppointmentDateTime = DateTime.Today.AddDays(-13).AddHours(11), IsRegularCustomer = true },
+        new() { Id = 23, Customer = Customers[9], Specialist = Specialists[9], Service = Services[3], AppointmentDateTime = DateTime.Today.AddDays(-15).AddHours(12), IsRegularCustomer = false },
 
-        // Клиенты, записанные к нескольким мастерам
-        new() { Id = 35, Client = Clients[3], Master = Masters[0], Service = Services[0], AppointmentDateTime = Day(-45, 10, 0), IsRegularClient = false },
-        new() { Id = 36, Client = Clients[3], Master = Masters[4], Service = Services[8], AppointmentDateTime = Day(-6, 11, 0), IsRegularClient = true },
-        new() { Id = 37, Client = Clients[4], Master = Masters[2], Service = Services[1], AppointmentDateTime = Day(-44, 12, 0), IsRegularClient = false },
-        new() { Id = 38, Client = Clients[4], Master = Masters[8], Service = Services[8], AppointmentDateTime = Day(-9, 13, 0), IsRegularClient = true }
+        new() { Id = 24, Customer = Customers[5], Specialist = Specialists[6], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-50).AddHours(10), IsRegularCustomer = false },
+        new() { Id = 25, Customer = Customers[6], Specialist = Specialists[5], Service = Services[6], AppointmentDateTime = DateTime.Today.AddDays(-42).AddHours(11), IsRegularCustomer = false },
+        new() { Id = 26, Customer = Customers[9], Specialist = Specialists[9], Service = Services[3], AppointmentDateTime = DateTime.Today.AddDays(-48).AddHours(12), IsRegularCustomer = false },
+        new() { Id = 27, Customer = Customers[2], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-38).AddHours(16), IsRegularCustomer = false },
+
+        new() { Id = 28, Customer = Customers[5], Specialist = Specialists[6], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-17).AddHours(9), IsRegularCustomer = true },
+        new() { Id = 29, Customer = Customers[6], Specialist = Specialists[5], Service = Services[3], AppointmentDateTime = DateTime.Today.AddDays(-19).AddHours(9), IsRegularCustomer = true },
+        new() { Id = 30, Customer = Customers[9], Specialist = Specialists[9], Service = Services[4], AppointmentDateTime = DateTime.Today.AddDays(-23).AddHours(9), IsRegularCustomer = false },
+        new() { Id = 31, Customer = Customers[2], Specialist = Specialists[1], Service = Services[9], AppointmentDateTime = DateTime.Today.AddDays(-4).AddHours(9), IsRegularCustomer = true },
+        new() { Id = 32, Customer = Customers[5], Specialist = Specialists[6], Service = Services[7], AppointmentDateTime = DateTime.Today.AddDays(-2).AddHours(9), IsRegularCustomer = true },
+        new() { Id = 33, Customer = Customers[9], Specialist = Specialists[9], Service = Services[2], AppointmentDateTime = DateTime.Today.AddDays(-27).AddHours(9), IsRegularCustomer = false },
+        new() { Id = 34, Customer = Customers[6], Specialist = Specialists[5], Service = Services[6], AppointmentDateTime = DateTime.Today.AddDays(-1).AddHours(9), IsRegularCustomer = true },
+        new() { Id = 35, Customer = Customers[2], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-29).AddHours(9), IsRegularCustomer = true }
     ];
-
-    private static DateTime Day(int daysFromToday, int hour, int minute)
-    {
-        return Today.AddDays(daysFromToday).Date.AddHours(hour).AddMinutes(minute);
-    }
 }

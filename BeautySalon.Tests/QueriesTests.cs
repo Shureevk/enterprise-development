@@ -8,55 +8,57 @@ namespace BeautySalon.Tests;
 public class QueriesTests
 {
     /// <summary>
-    /// 1 Вывести информацию о всех мастерах, стаж работы которых не менее 5 лет
+    /// 1. Вывести информацию обо всех специалистах, стаж работы которых не менее 5 лет
     /// </summary>
     [Fact]
-    public void GetMastersWithFiveOrMoreYearsOfExperience()
+    public void GetSpecialistsWithFiveOrMoreYearsOfExperience()
     {
-        var result = BeautySalonData.Masters
-            .Where(master => master.WorkExperience >= 5)
+        var result = BeautySalonData.Specialists
+            .Where(specialist => specialist.WorkExperience >= 5)
             .ToList();
 
         Assert.Equal(7, result.Count);
-        Assert.All(result, master => Assert.True(master.WorkExperience >= 5));
+        Assert.Contains(result, specialist => specialist.Id == 5);
     }
 
     /// <summary>
-    /// 2 Вывести информацию обо всех окошках выбранного мастера
-    /// Окошком считается промежуток между двумя последовательными записями.
+    /// 2. Вывести информацию обо всех окошках выбранного специалиста
+    /// Окошком считается промежуток между окончанием одной записи и началом следующей
     /// </summary>
     [Fact]
-    public void GetFreeWindowsForSelectedMaster()
+    public void GetFreeWindowsForSelectedSpecialist()
     {
-        var selectedMasterId = 2;
-
+        var selectedSpecialistId = 2;
         var selectedDate = DateTime.Today.AddDays(2).Date;
 
         var appointments = BeautySalonData.Appointments
-            .Where(appointment => appointment.Master.Id == selectedMasterId &&
+            .Where(appointment => appointment.Specialist.Id == selectedSpecialistId &&
                                   appointment.AppointmentDateTime.Date == selectedDate)
             .OrderBy(appointment => appointment.AppointmentDateTime)
             .ToList();
 
         var windows = appointments
             .Zip(appointments.Skip(1), (first, second) =>
-                new
+            {
+                var firstEnd = first.AppointmentDateTime.AddMinutes(first.Service.DurationMinutes);
+                return new
                 {
-                    Start = first.AppointmentDateTime,
+                    Start = firstEnd,
                     End = second.AppointmentDateTime,
-                    Duration = second.AppointmentDateTime - first.AppointmentDateTime
-                })
+                    Duration = second.AppointmentDateTime - firstEnd
+                };
+            })
             .Where(window => window.Duration > TimeSpan.Zero)
             .ToList();
 
         Assert.Equal(3, windows.Count);
         Assert.Equal(TimeSpan.FromHours(2), windows[0].Duration);
         Assert.Equal(TimeSpan.FromHours(4), windows[1].Duration);
-        Assert.Equal(TimeSpan.FromHours(2.5), windows[2].Duration);
+        Assert.Equal(TimeSpan.FromHours(1.5), windows[2].Duration);
     }
 
     /// <summary>
-    /// 3 Вывести топ 5 наиболее популярных услуг
+    /// 3. Вывести топ 5 наиболее популярных услуг
     /// </summary>
     [Fact]
     public void GetTopFivePopularServices()
@@ -69,44 +71,46 @@ public class QueriesTests
             .Select(group => group.Key)
             .ToList();
 
-        Assert.Equal(new[] { 1, 4, 2, 6, 7 }, result);
+        Assert.Equal(new[] { 1, 2, 4, 6, 7 }, result);
     }
 
     /// <summary>
-    /// 4 Вывести информацию о количестве повторных записей клиентов за последний месяц
+    /// 4. Вывести информацию о количестве повторных записей посетителей за последний месяц
     /// </summary>
     [Fact]
-    public void GetNumberOfClientsWithRepeatedAppointmentsDuringLastMonth()
+    public void GetNumberOfRepeatedAppointmentsDuringLastMonth()
     {
         var startDate = DateTime.Today.AddMonths(-1);
+        var endDate = DateTime.Now;
 
-        var result = BeautySalonData.Appointments
+        var lastMonthAppointments = BeautySalonData.Appointments
             .Where(appointment => appointment.AppointmentDateTime >= startDate &&
-                                  appointment.AppointmentDateTime <= DateTime.Now)
-            .GroupBy(appointment => appointment.Client.Id)
-            .Where(group => group.Count() > 1)
+                                  appointment.AppointmentDateTime <= endDate)
             .ToList();
 
-        Assert.Equal(10, result.Count);
+        var repeatAppointmentsCount = lastMonthAppointments
+            .GroupBy(appointment => appointment.Customer.Id)
+            .Sum(group => Math.Max(0, group.Count() - 1));
+
+        Assert.Equal(15, repeatAppointmentsCount);
+        Assert.DoesNotContain(lastMonthAppointments, appointment => appointment.Id == 8);
+        Assert.Contains(BeautySalonData.Appointments, appointment => appointment.Id == 8);
     }
 
     /// <summary>
-    /// 5 Вывести информацию о клиентах, записанных к нескольким мастерам,
-    /// упорядочить по дате рождения
+    /// 5. Вывести информацию о посетителях, записанных к нескольким специалистам, упорядочить по дате рождения
     /// </summary>
     [Fact]
-    public void GetClientsAssignedToSeveralMastersOrderedByBirthDate()
+    public void GetCustomersAssignedToSeveralSpecialistsOrderedByBirthDate()
     {
         var result = BeautySalonData.Appointments
-            .GroupBy(appointment => appointment.Client.Id)
-            .Where(group => group.Select(appointment => appointment.Master.Id).Distinct().Count() > 1)
-            .Select(group => group.First().Client)
-            .OrderBy(client => client.DateOfBirth)
+            .GroupBy(appointment => appointment.Customer.Id)
+            .Where(group => group.Select(appointment => appointment.Specialist.Id).Distinct().Count() > 1)
+            .Select(group => group.First().Customer)
+            .OrderBy(customer => customer.DateOfBirth)
             .ToList();
 
-        Assert.Equal(10, result.Count);
-        Assert.Equal(
-            new[] { 9, 5, 4, 8, 2, 6, 1, 7, 3, 10 },
-            result.Select(client => client.Id));
+        Assert.Equal(5, result.Count);
+        Assert.Equal(new[] { 9, 5, 4, 8, 2 }, result.Select(customer => customer.Id));
     }
 }

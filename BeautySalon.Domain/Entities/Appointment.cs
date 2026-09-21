@@ -1,7 +1,7 @@
 namespace BeautySalon.Domain.Entities;
 
 /// <summary>
-/// Запись клиента на услугу к мастеру
+/// Запись посетителя на услугу к специалисту
 /// </summary>
 public class Appointment
 {
@@ -11,14 +11,14 @@ public class Appointment
     public required int Id { get; set; }
 
     /// <summary>
-    /// Клиент.
+    /// Посетитель
     /// </summary>
-    public required Client Client { get; set; }
+    public required Customer Customer { get; set; }
 
     /// <summary>
-    /// Мастер
+    /// Специалист
     /// </summary>
-    public required Master Master { get; set; }
+    public required BeautySpecialist Specialist { get; set; }
 
     /// <summary>
     /// Услуга
@@ -31,7 +31,7 @@ public class Appointment
     public required DateTime AppointmentDateTime { get; set; }
 
     /// <summary>
-    /// Признак постоянного клиента
+    /// Признак постоянного посетителя
     /// </summary>
-    public required bool IsRegularClient { get; set; }
+    public bool IsRegularCustomer { get; set; }
 }

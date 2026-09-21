@@ -18,15 +18,15 @@ public class Service
     /// <summary>
     /// Категория услуги
     /// </summary>
-    public required string Category { get; set; }
+    public string? Category { get; set; }
 
     /// <summary>
     /// Стоимость услуги
     /// </summary>
-    public required decimal Price { get; set; }
+    public decimal Price { get; set; }
 
     /// <summary>
     /// Продолжительность услуги в минутах
     /// </summary>
-    public required int DurationMinutes { get; set; }
+    public int DurationMinutes { get; set; }
 }

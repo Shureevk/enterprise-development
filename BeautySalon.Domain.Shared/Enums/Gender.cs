@@ -1,7 +1,7 @@
 namespace BeautySalon.Domain.Shared.Enums;
 
 /// <summary>
-/// Пол клиента или мастера
+/// Пол посетителя или специалиста
 /// </summary>
 public enum Gender
 {

@@ -3,7 +3,7 @@ using BeautySalon.Domain.Shared.Enums;
 namespace BeautySalon.Domain.Entities;
 
 /// <summary>
-/// Базовый класс для людей, работающих или обслуживающихся в салоне
+/// Базовый класс для людей, связанных с салоном красоты
 /// </summary>
 public abstract class Person
 {
@@ -36,4 +36,9 @@ public abstract class Person
     /// Дата рождения
     /// </summary>
     public required DateOnly DateOfBirth { get; set; }
+
+    /// <summary>
+    /// Номер телефона
+    /// </summary>
+    public string? PhoneNumber { get; set; }
 }
