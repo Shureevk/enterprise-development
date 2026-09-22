@@ -23,7 +23,7 @@ public class Service
     /// <summary>
     /// Стоимость услуги
     /// </summary>
-    public decimal Price { get; set; }
+    public required decimal Price { get; set; }
 
     /// <summary>
     /// Продолжительность услуги в минутах

@@ -31,7 +31,7 @@ public static class BeautySalonData
     public static List<BeautySpecialist> Specialists { get; } =
     [
         new() { Id = 1, LastName = "Крылова", FirstName = "Алина", Patronymic = "Павловна", Gender = Gender.Female, DateOfBirth = new DateOnly(1990, 2, 11), PhoneNumber = "+79010000001", PassportNumber = "4501000001", Specialization = "Парикмахер", WorkExperience = 3 },
-        new() { Id = 2, LastName = "Семенова", FirstName = "Ирина", Patronymic = "Владимировна", Gender = Gender.Female, DateOfBirth = new DateOnly(1988, 5, 19), PhoneNumber = "+79010000002", PassportNumber = "4501000002", Specialization = "Колорист", WorkExperience = 5 },
+        new() { Id = 2, LastName = "Семенова", FirstName = "Ирина", Patronymic = "Владимировна", Gender = Gender.Female, DateOfBirth = new DateOnly(1988, 5, 19), PhoneNumber = "+79010000002", PassportNumber = "4501000002", Specialization = "Парикмахер", WorkExperience = 5 },
         new() { Id = 3, LastName = "Михайлов", FirstName = "Роман", Patronymic = "Ильич", Gender = Gender.Male, DateOfBirth = new DateOnly(1987, 9, 4), PhoneNumber = "+79010000003", PassportNumber = "4501000003", Specialization = "Барбер", WorkExperience = 7 },
         new() { Id = 4, LastName = "Белова", FirstName = "Екатерина", Patronymic = "Олеговна", Gender = Gender.Female, DateOfBirth = new DateOnly(1992, 1, 27), PhoneNumber = "+79010000004", PassportNumber = "4501000004", Specialization = "Мастер маникюра", WorkExperience = 9 },
         new() { Id = 5, LastName = "Зайцев", FirstName = "Денис", Patronymic = "Андреевич", Gender = Gender.Male, DateOfBirth = new DateOnly(1985, 6, 8), PhoneNumber = "+79010000005", PassportNumber = "4501000005", Specialization = "Массажист", WorkExperience = 12 },
@@ -66,8 +66,8 @@ public static class BeautySalonData
     [
         new() { Id = 1, Customer = Customers[0], Specialist = Specialists[1], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(2).AddHours(9), IsRegularCustomer = true },
         new() { Id = 2, Customer = Customers[1], Specialist = Specialists[1], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(2).AddHours(12), IsRegularCustomer = true },
-        new() { Id = 3, Customer = Customers[2], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(2).AddHours(17), IsRegularCustomer = false },
-        new() { Id = 4, Customer = Customers[3], Specialist = Specialists[1], Service = Services[6], AppointmentDateTime = DateTime.Today.AddDays(2).AddHours(20), IsRegularCustomer = false },
+        new() { Id = 3, Customer = Customers[2], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(2).AddHours(17), IsRegularCustomer = true },
+        new() { Id = 4, Customer = Customers[3], Specialist = Specialists[1], Service = Services[9], AppointmentDateTime = DateTime.Today.AddDays(2).AddHours(20), IsRegularCustomer = true },
 
         new() { Id = 5, Customer = Customers[0], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-10).AddHours(10), IsRegularCustomer = true },
         new() { Id = 6, Customer = Customers[0], Specialist = Specialists[1], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-20).AddHours(11), IsRegularCustomer = true },
@@ -80,9 +80,9 @@ public static class BeautySalonData
         new() { Id = 11, Customer = Customers[4], Specialist = Specialists[2], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-12).AddHours(14), IsRegularCustomer = true },
         new() { Id = 12, Customer = Customers[4], Specialist = Specialists[7], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-22).AddHours(15), IsRegularCustomer = true },
 
-        new() { Id = 13, Customer = Customers[7], Specialist = Specialists[5], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-3).AddHours(10), IsRegularCustomer = true },
-        new() { Id = 14, Customer = Customers[7], Specialist = Specialists[5], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-7).AddHours(11), IsRegularCustomer = true },
-        new() { Id = 15, Customer = Customers[7], Specialist = Specialists[5], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-14).AddHours(12), IsRegularCustomer = true },
+        new() { Id = 13, Customer = Customers[7], Specialist = Specialists[7], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-3).AddHours(10), IsRegularCustomer = true },
+        new() { Id = 14, Customer = Customers[7], Specialist = Specialists[7], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-7).AddHours(11), IsRegularCustomer = true },
+        new() { Id = 15, Customer = Customers[7], Specialist = Specialists[7], Service = Services[5], AppointmentDateTime = DateTime.Today.AddDays(-14).AddHours(12), IsRegularCustomer = true },
         new() { Id = 16, Customer = Customers[7], Specialist = Specialists[8], Service = Services[8], AppointmentDateTime = DateTime.Today.AddDays(-21).AddHours(13), IsRegularCustomer = true },
 
         new() { Id = 17, Customer = Customers[3], Specialist = Specialists[4], Service = Services[8], AppointmentDateTime = DateTime.Today.AddDays(-9).AddHours(11), IsRegularCustomer = true },
@@ -94,17 +94,17 @@ public static class BeautySalonData
         new() { Id = 22, Customer = Customers[6], Specialist = Specialists[5], Service = Services[6], AppointmentDateTime = DateTime.Today.AddDays(-13).AddHours(11), IsRegularCustomer = true },
         new() { Id = 23, Customer = Customers[9], Specialist = Specialists[9], Service = Services[3], AppointmentDateTime = DateTime.Today.AddDays(-15).AddHours(12), IsRegularCustomer = false },
 
-        new() { Id = 24, Customer = Customers[5], Specialist = Specialists[6], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-50).AddHours(10), IsRegularCustomer = false },
-        new() { Id = 25, Customer = Customers[6], Specialist = Specialists[5], Service = Services[6], AppointmentDateTime = DateTime.Today.AddDays(-42).AddHours(11), IsRegularCustomer = false },
+        new() { Id = 24, Customer = Customers[5], Specialist = Specialists[6], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-50).AddHours(10), IsRegularCustomer = true },
+        new() { Id = 25, Customer = Customers[6], Specialist = Specialists[5], Service = Services[6], AppointmentDateTime = DateTime.Today.AddDays(-42).AddHours(11), IsRegularCustomer = true },
         new() { Id = 26, Customer = Customers[9], Specialist = Specialists[9], Service = Services[3], AppointmentDateTime = DateTime.Today.AddDays(-48).AddHours(12), IsRegularCustomer = false },
-        new() { Id = 27, Customer = Customers[2], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-38).AddHours(16), IsRegularCustomer = false },
+        new() { Id = 27, Customer = Customers[2], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-38).AddHours(16), IsRegularCustomer = true },
 
         new() { Id = 28, Customer = Customers[5], Specialist = Specialists[6], Service = Services[1], AppointmentDateTime = DateTime.Today.AddDays(-17).AddHours(9), IsRegularCustomer = true },
-        new() { Id = 29, Customer = Customers[6], Specialist = Specialists[5], Service = Services[3], AppointmentDateTime = DateTime.Today.AddDays(-19).AddHours(9), IsRegularCustomer = true },
+        new() { Id = 29, Customer = Customers[6], Specialist = Specialists[5], Service = Services[6], AppointmentDateTime = DateTime.Today.AddDays(-19).AddHours(9), IsRegularCustomer = true },
         new() { Id = 30, Customer = Customers[9], Specialist = Specialists[9], Service = Services[4], AppointmentDateTime = DateTime.Today.AddDays(-23).AddHours(9), IsRegularCustomer = false },
         new() { Id = 31, Customer = Customers[2], Specialist = Specialists[1], Service = Services[9], AppointmentDateTime = DateTime.Today.AddDays(-4).AddHours(9), IsRegularCustomer = true },
-        new() { Id = 32, Customer = Customers[5], Specialist = Specialists[6], Service = Services[7], AppointmentDateTime = DateTime.Today.AddDays(-2).AddHours(9), IsRegularCustomer = true },
-        new() { Id = 33, Customer = Customers[9], Specialist = Specialists[9], Service = Services[2], AppointmentDateTime = DateTime.Today.AddDays(-27).AddHours(9), IsRegularCustomer = false },
+        new() { Id = 32, Customer = Customers[5], Specialist = Specialists[6], Service = Services[9], AppointmentDateTime = DateTime.Today.AddDays(-2).AddHours(9), IsRegularCustomer = true },
+        new() { Id = 33, Customer = Customers[9], Specialist = Specialists[9], Service = Services[3], AppointmentDateTime = DateTime.Today.AddDays(-27).AddHours(9), IsRegularCustomer = false },
         new() { Id = 34, Customer = Customers[6], Specialist = Specialists[5], Service = Services[6], AppointmentDateTime = DateTime.Today.AddDays(-1).AddHours(9), IsRegularCustomer = true },
         new() { Id = 35, Customer = Customers[2], Specialist = Specialists[1], Service = Services[0], AppointmentDateTime = DateTime.Today.AddDays(-29).AddHours(9), IsRegularCustomer = true }
     ];
