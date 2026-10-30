@@ -41,6 +41,7 @@ builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<SpecialistService>();
 builder.Services.AddScoped<ServiceService>();
 builder.Services.AddScoped<AppointmentService>();
+builder.Services.AddScoped<AnalyticsService>();
 
 var app = builder.Build();
 
