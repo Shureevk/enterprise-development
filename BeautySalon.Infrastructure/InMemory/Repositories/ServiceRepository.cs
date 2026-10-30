@@ -54,6 +54,13 @@ public sealed class ServiceRepository(SalonStorage storage) : IServiceRepository
 
             var saved = EntityCopies.Copy(entity);
 
+            if (current.DurationMinutes != saved.DurationMinutes &&
+                storage.Appointments.Any(item => item.Service.Id == current.Id))
+            {
+                throw new InvalidOperationException(
+                    "Нельзя менять длительность услуги с существующими записями");
+            }
+
             current.Name = saved.Name;
             current.Category = saved.Category;
             current.Price = saved.Price;

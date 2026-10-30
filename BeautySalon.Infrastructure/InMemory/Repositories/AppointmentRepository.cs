@@ -40,6 +40,7 @@ public sealed class AppointmentRepository(SalonStorage storage) : IAppointmentRe
                 ?? throw new ArgumentException("Специалист не найден");
             saved.Service = storage.Services.FirstOrDefault(item => item.Id == saved.Service.Id)
                 ?? throw new ArgumentException("Услуга не найдена");
+            ValidateSchedule(saved, null);
             saved.Id = storage.NextId<Appointment>();
             storage.Appointments.Add(saved);
             return EntityCopies.Copy(saved);
@@ -64,6 +65,7 @@ public sealed class AppointmentRepository(SalonStorage storage) : IAppointmentRe
                 ?? throw new ArgumentException("Специалист не найден");
             saved.Service = storage.Services.FirstOrDefault(item => item.Id == saved.Service.Id)
                 ?? throw new ArgumentException("Услуга не найдена");
+            ValidateSchedule(saved, entity.Id);
             current.Customer = saved.Customer;
             current.Specialist = saved.Specialist;
             current.Service = saved.Service;
@@ -80,6 +82,32 @@ public sealed class AppointmentRepository(SalonStorage storage) : IAppointmentRe
         {
 
             return storage.Appointments.RemoveAll(item => item.Id == id) > 0;
+        }
+    }
+
+    private void ValidateSchedule(Appointment appointment, int? excludedId)
+    {
+        var start = appointment.AppointmentDateTime;
+        var duration = appointment.Service.DurationMinutes;
+
+        if (start == DateTime.MinValue || duration <= 0 ||
+            start > DateTime.MaxValue.AddMinutes(-duration))
+        {
+            throw new ArgumentException("Дата или длительность услуги указана некорректно");
+        }
+
+        var end = start.AddMinutes(duration);
+
+        var hasConflict = storage.Appointments.Any(existing =>
+            existing.Id != excludedId &&
+            (existing.Specialist.Id == appointment.Specialist.Id ||
+             existing.Customer.Id == appointment.Customer.Id) &&
+            start < existing.AppointmentDateTime.AddMinutes(existing.Service.DurationMinutes) &&
+            existing.AppointmentDateTime < end);
+
+        if (hasConflict)
+        {
+            throw new InvalidOperationException("Посетитель или специалист занят в выбранное время");
         }
     }
 }
