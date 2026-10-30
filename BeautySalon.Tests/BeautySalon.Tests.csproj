@@ -21,5 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BeautySalon.Domain\BeautySalon.Domain.csproj" />
+    <ProjectReference Include="..\BeautySalon.Application\BeautySalon.Application.csproj" />
+    <ProjectReference Include="..\BeautySalon.Infrastructure\BeautySalon.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
