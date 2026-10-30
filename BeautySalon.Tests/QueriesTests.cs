@@ -1,4 +1,4 @@
-using BeautySalon.Domain.Data;
+﻿using BeautySalon.Infrastructure.InMemory;
 
 namespace BeautySalon.Tests;
 

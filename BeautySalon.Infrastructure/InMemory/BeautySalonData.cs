@@ -1,7 +1,7 @@
-using BeautySalon.Domain.Entities;
+﻿using BeautySalon.Domain.Entities;
 using BeautySalon.Domain.Shared.Enums;
 
-namespace BeautySalon.Domain.Data;
+namespace BeautySalon.Infrastructure.InMemory;
 
 /// <summary>
 /// Тестовые данные предметной области салона красоты
