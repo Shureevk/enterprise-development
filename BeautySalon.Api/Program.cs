@@ -1,4 +1,5 @@
-﻿using BeautySalon.Api.ErrorHandling;
+﻿using Scalar.AspNetCore;
+using BeautySalon.Api.ErrorHandling;
 using BeautySalon.Application.Services;
 using BeautySalon.Domain.Repositories;
 using BeautySalon.Infrastructure.InMemory;
@@ -51,6 +52,7 @@ app.UseStatusCodePages();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.MapControllers();
