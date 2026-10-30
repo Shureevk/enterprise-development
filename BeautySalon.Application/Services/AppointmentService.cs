@@ -69,6 +69,57 @@ public sealed class AppointmentService(
         }
     }
 
+    /// <summary>
+    /// Получить записи посетителя
+    /// </summary>
+    /// <param name="id">Идентификатор посетителя</param>
+    public IReadOnlyList<AppointmentResponse> GetByCustomer(int id)
+    {
+        if (customers.GetById(id) is null)
+        {
+            throw new KeyNotFoundException("Посетитель не найден");
+        }
+
+        return appointments.GetAll()
+            .Where(appointment => appointment.Customer.Id == id)
+            .Select(ToResponse)
+            .ToList();
+    }
+
+    /// <summary>
+    /// Получить записи специалиста
+    /// </summary>
+    /// <param name="id">Идентификатор специалиста</param>
+    public IReadOnlyList<AppointmentResponse> GetBySpecialist(int id)
+    {
+        if (specialists.GetById(id) is null)
+        {
+            throw new KeyNotFoundException("Специалист не найден");
+        }
+
+        return appointments.GetAll()
+            .Where(appointment => appointment.Specialist.Id == id)
+            .Select(ToResponse)
+            .ToList();
+    }
+
+    /// <summary>
+    /// Получить записи на услугу
+    /// </summary>
+    /// <param name="id">Идентификатор услуги</param>
+    public IReadOnlyList<AppointmentResponse> GetByService(int id)
+    {
+        if (services.GetById(id) is null)
+        {
+            throw new KeyNotFoundException("Услуга не найдена");
+        }
+
+        return appointments.GetAll()
+            .Where(appointment => appointment.Service.Id == id)
+            .Select(ToResponse)
+            .ToList();
+    }
+
     private Appointment ToEntity(int id, SaveAppointmentRequest request)
     {
         RequestValidation.Validate(request);
