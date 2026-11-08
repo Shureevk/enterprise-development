@@ -67,12 +67,11 @@ public sealed class ServiceService(IServiceRepository repository)
 
     private static Service ToEntity(int id, SaveServiceRequest request)
     {
-        RequestValidation.Validate(request);
 
         return new Service
         {
             Id = id,
-            Name = request.Name!.Trim(),
+            Name = request.Name.Trim(),
             Category = request.Category?.Trim(),
             Price = request.Price!.Value,
             DurationMinutes = request.DurationMinutes!.Value,

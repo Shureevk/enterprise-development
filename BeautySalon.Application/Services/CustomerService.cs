@@ -67,13 +67,12 @@ public sealed class CustomerService(ICustomerRepository repository)
 
     private static Customer ToEntity(int id, SaveCustomerRequest request)
     {
-        RequestValidation.Validate(request);
-        RequestValidation.ValidateBirthDate(request.DateOfBirth!.Value);
+        PersonRules.ValidateBirthDate(request.DateOfBirth!.Value);
         return new Customer
         {
             Id = id,
-            LastName = request.LastName!.Trim(),
-            FirstName = request.FirstName!.Trim(),
+            LastName = request.LastName.Trim(),
+            FirstName = request.FirstName.Trim(),
             Patronymic = request.Patronymic?.Trim(),
             Gender = request.Gender!.Value,
             DateOfBirth = request.DateOfBirth!.Value,

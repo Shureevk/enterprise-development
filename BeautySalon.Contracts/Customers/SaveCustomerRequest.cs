@@ -13,14 +13,14 @@ public sealed class SaveCustomerRequest
     /// </summary>
     [Required]
     [StringLength(100)]
-    public string? LastName { get; init; }
+    public string LastName { get; init; } = string.Empty;
 
     /// <summary>
     /// Имя
     /// </summary>
     [Required]
     [StringLength(100)]
-    public string? FirstName { get; init; }
+    public string FirstName { get; init; } = string.Empty;
 
     /// <summary>
     /// Отчество при наличии
@@ -47,5 +47,5 @@ public sealed class SaveCustomerRequest
     [Required]
     [Phone]
     [StringLength(30)]
-    public string? PhoneNumber { get; init; }
+    public string PhoneNumber { get; init; } = string.Empty;
 }

@@ -4,7 +4,6 @@ using BeautySalon.Application.Services;
 using BeautySalon.Domain.Repositories;
 using BeautySalon.Infrastructure.InMemory;
 using BeautySalon.Infrastructure.InMemory.Repositories;
-using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,24 +11,6 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
-
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-{
-    options.InvalidModelStateResponseFactory = context =>
-    {
-        var problem = new ValidationProblemDetails(context.ModelState)
-        {
-            Status = StatusCodes.Status400BadRequest,
-            Title = "Некорректные данные",
-            Instance = context.HttpContext.Request.Path.Value
-        };
-
-        return new BadRequestObjectResult(problem)
-        {
-            ContentTypes = { "application/problem+json" }
-        };
-    };
-});
 
 builder.Services.AddSingleton<SalonStorage>();
 

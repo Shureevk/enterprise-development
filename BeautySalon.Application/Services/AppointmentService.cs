@@ -122,7 +122,6 @@ public sealed class AppointmentService(
 
     private Appointment ToEntity(int id, SaveAppointmentRequest request)
     {
-        RequestValidation.Validate(request);
         var start = request.AppointmentDateTime!.Value;
 
         if (start == DateTime.MinValue || start.Kind == DateTimeKind.Utc)

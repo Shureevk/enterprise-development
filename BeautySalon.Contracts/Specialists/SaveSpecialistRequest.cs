@@ -13,14 +13,14 @@ public sealed class SaveSpecialistRequest
     /// </summary>
     [Required]
     [StringLength(100)]
-    public string? LastName { get; init; }
+    public string LastName { get; init; } = string.Empty;
 
     /// <summary>
     /// Имя
     /// </summary>
     [Required]
     [StringLength(100)]
-    public string? FirstName { get; init; }
+    public string FirstName { get; init; } = string.Empty;
 
     /// <summary>
     /// Отчество при наличии
@@ -60,7 +60,7 @@ public sealed class SaveSpecialistRequest
     /// </summary>
     [Required]
     [StringLength(100)]
-    public string? Specialization { get; init; }
+    public string Specialization { get; init; } = string.Empty;
 
     /// <summary>
     /// Стаж работы в полных годах
