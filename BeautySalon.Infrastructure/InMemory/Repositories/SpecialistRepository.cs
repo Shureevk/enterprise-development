@@ -34,6 +34,21 @@ public sealed class SpecialistRepository(SalonStorage storage) : ISpecialistRepo
         lock (storage.SyncRoot)
         {
             var saved = EntityCopies.Copy(entity);
+            saved.PassportNumber = string.IsNullOrWhiteSpace(saved.PassportNumber)
+                ? null
+                : saved.PassportNumber.Trim();
+
+            if (saved.PassportNumber is not null &&
+                storage.Specialists.Any(specialist =>
+                    !ReferenceEquals(specialist, null) &&
+                    string.Equals(
+                        specialist.PassportNumber?.Trim(),
+                        saved.PassportNumber,
+                        StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException(
+                    "Специалист с таким паспортом уже существует");
+            }
 
             saved.Id = storage.NextId<BeautySpecialist>();
             storage.Specialists.Add(saved);
@@ -53,6 +68,21 @@ public sealed class SpecialistRepository(SalonStorage storage) : ISpecialistRepo
             }
 
             var saved = EntityCopies.Copy(entity);
+            saved.PassportNumber = string.IsNullOrWhiteSpace(saved.PassportNumber)
+                ? null
+                : saved.PassportNumber.Trim();
+
+            if (saved.PassportNumber is not null &&
+                storage.Specialists.Any(specialist =>
+                    !ReferenceEquals(specialist, current) &&
+                    string.Equals(
+                        specialist.PassportNumber?.Trim(),
+                        saved.PassportNumber,
+                        StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException(
+                    "Специалист с таким паспортом уже существует");
+            }
 
             current.LastName = saved.LastName;
             current.FirstName = saved.FirstName;

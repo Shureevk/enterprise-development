@@ -49,9 +49,8 @@ public sealed class SaveSpecialistRequest
     public string? PhoneNumber { get; init; }
 
     /// <summary>
-    /// Паспортные данные
+    /// Паспортные данные при наличии
     /// </summary>
-    [Required]
     [StringLength(20)]
     public string? PassportNumber { get; init; }
 
