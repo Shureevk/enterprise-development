@@ -1,11 +1,13 @@
-﻿using BeautySalon.Domain.Shared.Enums;
+﻿using BeautySalon.Contracts.Interfaces;
+
+using BeautySalon.Domain.Shared.Enums;
 
 namespace BeautySalon.Contracts.Customers;
 
 /// <summary>
 /// Сведения о посетителе
 /// </summary>
-public sealed class CustomerResponse
+public sealed class CustomerResponse : IResourceResponse
 {
     /// <summary>
     /// Идентификатор посетителя

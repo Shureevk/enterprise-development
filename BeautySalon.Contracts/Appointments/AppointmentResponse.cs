@@ -1,9 +1,11 @@
-﻿namespace BeautySalon.Contracts.Appointments;
+﻿using BeautySalon.Contracts.Interfaces;
+
+namespace BeautySalon.Contracts.Appointments;
 
 /// <summary>
 /// Сведения о записи посетителя
 /// </summary>
-public sealed class AppointmentResponse
+public sealed class AppointmentResponse : IResourceResponse
 {
     /// <summary>
     /// Идентификатор записи

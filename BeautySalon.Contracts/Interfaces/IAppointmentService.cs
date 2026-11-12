@@ -5,38 +5,8 @@ namespace BeautySalon.Contracts.Interfaces;
 /// <summary>
 /// Контракт сервиса AppointmentService
 /// </summary>
-public interface IAppointmentService
+public interface IAppointmentService : ICrudService<SaveAppointmentRequest, AppointmentResponse>
 {
-    /// <summary>
-    /// Получить все записи
-    /// </summary>
-    IReadOnlyList<AppointmentResponse> GetAll();
-
-    /// <summary>
-    /// Получить запись по идентификатору
-    /// </summary>
-    /// <param name="id">Идентификатор записи</param>
-    AppointmentResponse GetById(int id);
-
-    /// <summary>
-    /// Создать запись
-    /// </summary>
-    /// <param name="request">Данные записи</param>
-    AppointmentResponse Create(SaveAppointmentRequest request);
-
-    /// <summary>
-    /// Изменить запись
-    /// </summary>
-    /// <param name="id">Идентификатор записи</param>
-    /// <param name="request">Новые данные записи</param>
-    void Update(int id, SaveAppointmentRequest request);
-
-    /// <summary>
-    /// Удалить запись
-    /// </summary>
-    /// <param name="id">Идентификатор записи</param>
-    void Delete(int id);
-
     /// <summary>
     /// Получить записи посетителя
     /// </summary>

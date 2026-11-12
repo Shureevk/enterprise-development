@@ -1,11 +1,13 @@
-﻿using BeautySalon.Domain.Shared.Enums;
+﻿using BeautySalon.Contracts.Interfaces;
+
+using BeautySalon.Domain.Shared.Enums;
 
 namespace BeautySalon.Contracts.Specialists;
 
 /// <summary>
 /// Сведения о специалисте
 /// </summary>
-public sealed class SpecialistResponse
+public sealed class SpecialistResponse : IResourceResponse
 {
     /// <summary>
     /// Идентификатор специалиста

@@ -1,9 +1,11 @@
-﻿namespace BeautySalon.Contracts.Services;
+﻿using BeautySalon.Contracts.Interfaces;
+
+namespace BeautySalon.Contracts.Services;
 
 /// <summary>
 /// Сведения об услуге
 /// </summary>
-public sealed class ServiceResponse
+public sealed class ServiceResponse : IResourceResponse
 {
     /// <summary>
     /// Идентификатор услуги
