@@ -1,4 +1,5 @@
-﻿using BeautySalon.Application.Services;
+﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Application.Services;
 using BeautySalon.Contracts.Services;
 using BeautySalon.Contracts.Appointments;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace BeautySalon.Api.Controllers;
 [Route("api/services")]
 [Produces("application/json")]
 public sealed class ServicesController(
-    ServiceService service, AppointmentService appointments) : ControllerBase
+    IServiceService service, IAppointmentService appointments) : ControllerBase
 {
     /// <summary>
     /// Получить список объектов

@@ -1,4 +1,5 @@
-﻿using BeautySalon.Contracts.Analytics;
+﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Contracts.Analytics;
 using BeautySalon.Contracts.Customers;
 using BeautySalon.Contracts.Specialists;
 using BeautySalon.Domain.Repositories;
@@ -12,7 +13,7 @@ namespace BeautySalon.Application.Services;
 /// <param name="specialists">Репозиторий специалистов</param>
 public sealed class AnalyticsService(
     IAppointmentRepository appointments,
-    ISpecialistRepository specialists)
+    ISpecialistRepository specialists) : IAnalyticsService
 {
     /// <summary>
     /// Получить специалистов со стажем не менее пяти лет

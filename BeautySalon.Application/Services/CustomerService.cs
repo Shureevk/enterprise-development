@@ -1,4 +1,5 @@
-﻿using BeautySalon.Contracts.Customers;
+﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Contracts.Customers;
 using BeautySalon.Domain.Entities;
 using BeautySalon.Domain.Repositories;
 
@@ -8,7 +9,7 @@ namespace BeautySalon.Application.Services;
 /// Операции с сущностями Customer
 /// </summary>
 /// <param name="repository">Репозиторий сущностей</param>
-public sealed class CustomerService(ICustomerRepository repository)
+public sealed class CustomerService(ICustomerRepository repository) : ICustomerService
 {
     /// <summary>
     /// Получить список объектов

@@ -1,4 +1,5 @@
-﻿using BeautySalon.Contracts.Appointments;
+﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Contracts.Appointments;
 using BeautySalon.Domain.Entities;
 using BeautySalon.Domain.Repositories;
 
@@ -15,7 +16,7 @@ public sealed class AppointmentService(
     IAppointmentRepository appointments,
     ICustomerRepository customers,
     ISpecialistRepository specialists,
-    IServiceRepository services)
+    IServiceRepository services) : IAppointmentService
 {
     /// <summary>
     /// Получить все записи

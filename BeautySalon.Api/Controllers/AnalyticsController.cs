@@ -1,4 +1,5 @@
-﻿using BeautySalon.Application.Services;
+﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Application.Services;
 using BeautySalon.Contracts.Analytics;
 using BeautySalon.Contracts.Customers;
 using BeautySalon.Contracts.Specialists;
@@ -13,7 +14,7 @@ namespace BeautySalon.Api.Controllers;
 [ApiController]
 [Route("api/analytics")]
 [Produces("application/json")]
-public sealed class AnalyticsController(AnalyticsService service) : ControllerBase
+public sealed class AnalyticsController(IAnalyticsService service) : ControllerBase
 {
     /// <summary>
     /// Получить специалистов со стажем не менее пяти лет

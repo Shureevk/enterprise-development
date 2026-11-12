@@ -1,4 +1,5 @@
-﻿using Scalar.AspNetCore;
+﻿using BeautySalon.Contracts.Interfaces;
+using Scalar.AspNetCore;
 using BeautySalon.Api.ErrorHandling;
 using BeautySalon.Application.Services;
 using BeautySalon.Domain.Repositories;
@@ -19,11 +20,11 @@ builder.Services.AddScoped<ISpecialistRepository, SpecialistRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
-builder.Services.AddScoped<CustomerService>();
-builder.Services.AddScoped<SpecialistService>();
-builder.Services.AddScoped<ServiceService>();
-builder.Services.AddScoped<AppointmentService>();
-builder.Services.AddScoped<AnalyticsService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<ISpecialistService, SpecialistService>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
 var app = builder.Build();
 
