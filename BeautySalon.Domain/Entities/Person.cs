@@ -1,11 +1,11 @@
-using BeautySalon.Domain.Shared.Enums;
+﻿using BeautySalon.Domain.Shared.Enums;
 
 namespace BeautySalon.Domain.Entities;
 
 /// <summary>
 /// Базовый класс для людей, связанных с салоном красоты
 /// </summary>
-public abstract class Person
+public abstract class Person : IEntity
 {
     /// <summary>
     /// Уникальный идентификатор

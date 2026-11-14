@@ -4,82 +4,40 @@ using BeautySalon.Domain.Repositories;
 namespace BeautySalon.Infrastructure.InMemory.Repositories;
 
 /// <summary>
-/// Хранение сущностей Service в памяти
+/// Репозиторий сущностей Service
 /// </summary>
 /// <param name="storage">Общее хранилище салона</param>
-public sealed class ServiceRepository(SalonStorage storage) : IServiceRepository
+public sealed class ServiceRepository(SalonStorage storage)
+    : InMemoryRepository<Service>(storage, storage.Services, EntityCopies.Copy), IServiceRepository
 {
     /// <inheritdoc />
-    public IReadOnlyList<Service> GetAll()
+    protected override void PrepareForSave(Service saved, Service? current)
     {
-        lock (storage.SyncRoot)
+        if (current is not null &&
+            current.DurationMinutes != saved.DurationMinutes &&
+            Storage.Appointments.Any(item => item.Service.Id == current.Id))
         {
-            return storage.Services.Select(EntityCopies.Copy).ToList();
+            throw new InvalidOperationException(
+                "Нельзя менять длительность услуги с существующими записями");
         }
     }
 
     /// <inheritdoc />
-    public Service? GetById(int id)
+    protected override void ApplyChanges(Service current, Service saved)
     {
-        lock (storage.SyncRoot)
-        {
-            var entity = storage.Services.FirstOrDefault(item => item.Id == id);
-            return entity is null ? null : EntityCopies.Copy(entity);
-        }
+        current.Name = saved.Name;
+        current.Category = saved.Category;
+        current.Price = saved.Price;
+        current.DurationMinutes = saved.DurationMinutes;
     }
 
     /// <inheritdoc />
-    public Service Add(Service entity)
+    protected override void CheckDeletion(Service entity)
     {
-        lock (storage.SyncRoot)
+        if (Storage.Appointments.Any(item => item.Service.Id == entity.Id))
         {
-            var saved = EntityCopies.Copy(entity);
-
-            saved.Id = storage.NextId<Service>();
-            storage.Services.Add(saved);
-            return EntityCopies.Copy(saved);
+            throw new InvalidOperationException("Объект используется в записях");
         }
     }
 
-    /// <inheritdoc />
-    public bool Update(Service entity)
-    {
-        lock (storage.SyncRoot)
-        {
-            var current = storage.Services.FirstOrDefault(item => item.Id == entity.Id);
-            if (current is null)
-            {
-                return false;
-            }
-
-            var saved = EntityCopies.Copy(entity);
-
-            if (current.DurationMinutes != saved.DurationMinutes &&
-                storage.Appointments.Any(item => item.Service.Id == current.Id))
-            {
-                throw new InvalidOperationException(
-                    "Нельзя менять длительность услуги с существующими записями");
-            }
-
-            current.Name = saved.Name;
-            current.Category = saved.Category;
-            current.Price = saved.Price;
-            current.DurationMinutes = saved.DurationMinutes;
-            return true;
-        }
-    }
-
-    /// <inheritdoc />
-    public bool Delete(int id)
-    {
-        lock (storage.SyncRoot)
-        {
-            if (storage.Appointments.Any(item => item.Service.Id == id))
-            {
-                throw new InvalidOperationException("Объект используется в записях");
-            }
-
-            return storage.Services.RemoveAll(item => item.Id == id) > 0;
-        }
-    }
 }

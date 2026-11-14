@@ -4,85 +4,32 @@ using BeautySalon.Domain.Repositories;
 namespace BeautySalon.Infrastructure.InMemory.Repositories;
 
 /// <summary>
-/// Хранение сущностей Appointment в памяти
+/// Репозиторий сущностей Appointment
 /// </summary>
 /// <param name="storage">Общее хранилище салона</param>
-public sealed class AppointmentRepository(SalonStorage storage) : IAppointmentRepository
+public sealed class AppointmentRepository(SalonStorage storage)
+    : InMemoryRepository<Appointment>(storage, storage.Appointments, EntityCopies.Copy), IAppointmentRepository
 {
     /// <inheritdoc />
-    public IReadOnlyList<Appointment> GetAll()
+    protected override void PrepareForSave(Appointment saved, Appointment? current)
     {
-        lock (storage.SyncRoot)
-        {
-            return storage.Appointments.Select(EntityCopies.Copy).ToList();
-        }
+        saved.Customer = Storage.Customers.FirstOrDefault(item => item.Id == saved.Customer.Id)
+            ?? throw new ArgumentException("Посетитель не найден");
+        saved.Specialist = Storage.Specialists.FirstOrDefault(item => item.Id == saved.Specialist.Id)
+            ?? throw new ArgumentException("Специалист не найден");
+        saved.Service = Storage.Services.FirstOrDefault(item => item.Id == saved.Service.Id)
+            ?? throw new ArgumentException("Услуга не найдена");
+        ValidateSchedule(saved, current?.Id);
     }
 
     /// <inheritdoc />
-    public Appointment? GetById(int id)
+    protected override void ApplyChanges(Appointment current, Appointment saved)
     {
-        lock (storage.SyncRoot)
-        {
-            var entity = storage.Appointments.FirstOrDefault(item => item.Id == id);
-            return entity is null ? null : EntityCopies.Copy(entity);
-        }
-    }
-
-    /// <inheritdoc />
-    public Appointment Add(Appointment entity)
-    {
-        lock (storage.SyncRoot)
-        {
-            var saved = EntityCopies.Copy(entity);
-            saved.Customer = storage.Customers.FirstOrDefault(item => item.Id == saved.Customer.Id)
-                ?? throw new ArgumentException("Посетитель не найден");
-            saved.Specialist = storage.Specialists.FirstOrDefault(item => item.Id == saved.Specialist.Id)
-                ?? throw new ArgumentException("Специалист не найден");
-            saved.Service = storage.Services.FirstOrDefault(item => item.Id == saved.Service.Id)
-                ?? throw new ArgumentException("Услуга не найдена");
-            ValidateSchedule(saved, null);
-            saved.Id = storage.NextId<Appointment>();
-            storage.Appointments.Add(saved);
-            return EntityCopies.Copy(saved);
-        }
-    }
-
-    /// <inheritdoc />
-    public bool Update(Appointment entity)
-    {
-        lock (storage.SyncRoot)
-        {
-            var current = storage.Appointments.FirstOrDefault(item => item.Id == entity.Id);
-            if (current is null)
-            {
-                return false;
-            }
-
-            var saved = EntityCopies.Copy(entity);
-            saved.Customer = storage.Customers.FirstOrDefault(item => item.Id == saved.Customer.Id)
-                ?? throw new ArgumentException("Посетитель не найден");
-            saved.Specialist = storage.Specialists.FirstOrDefault(item => item.Id == saved.Specialist.Id)
-                ?? throw new ArgumentException("Специалист не найден");
-            saved.Service = storage.Services.FirstOrDefault(item => item.Id == saved.Service.Id)
-                ?? throw new ArgumentException("Услуга не найдена");
-            ValidateSchedule(saved, entity.Id);
-            current.Customer = saved.Customer;
-            current.Specialist = saved.Specialist;
-            current.Service = saved.Service;
-            current.AppointmentDateTime = saved.AppointmentDateTime;
-            current.IsRegularCustomer = saved.IsRegularCustomer;
-            return true;
-        }
-    }
-
-    /// <inheritdoc />
-    public bool Delete(int id)
-    {
-        lock (storage.SyncRoot)
-        {
-
-            return storage.Appointments.RemoveAll(item => item.Id == id) > 0;
-        }
+        current.Customer = saved.Customer;
+        current.Specialist = saved.Specialist;
+        current.Service = saved.Service;
+        current.AppointmentDateTime = saved.AppointmentDateTime;
+        current.IsRegularCustomer = saved.IsRegularCustomer;
     }
 
     private void ValidateSchedule(Appointment appointment, int? excludedId)
@@ -98,7 +45,7 @@ public sealed class AppointmentRepository(SalonStorage storage) : IAppointmentRe
 
         var end = start.AddMinutes(duration);
 
-        var hasConflict = storage.Appointments.Any(existing =>
+        var hasConflict = Storage.Appointments.Any(existing =>
             existing.Id != excludedId &&
             (existing.Specialist.Id == appointment.Specialist.Id ||
              existing.Customer.Id == appointment.Customer.Id) &&

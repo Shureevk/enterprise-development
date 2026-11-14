@@ -1,9 +1,9 @@
-namespace BeautySalon.Domain.Entities;
+﻿namespace BeautySalon.Domain.Entities;
 
 /// <summary>
 /// Услуга салона красоты
 /// </summary>
-public class Service
+public class Service : IEntity
 {
     /// <summary>
     /// Уникальный идентификатор

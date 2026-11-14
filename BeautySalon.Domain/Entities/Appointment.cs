@@ -1,9 +1,9 @@
-namespace BeautySalon.Domain.Entities;
+﻿namespace BeautySalon.Domain.Entities;
 
 /// <summary>
 /// Запись посетителя на услугу к специалисту
 /// </summary>
-public class Appointment
+public class Appointment : IEntity
 {
     /// <summary>
     /// Уникальный идентификатор записи

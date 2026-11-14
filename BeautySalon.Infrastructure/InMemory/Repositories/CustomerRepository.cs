@@ -4,77 +4,30 @@ using BeautySalon.Domain.Repositories;
 namespace BeautySalon.Infrastructure.InMemory.Repositories;
 
 /// <summary>
-/// Хранение сущностей Customer в памяти
+/// Репозиторий сущностей Customer
 /// </summary>
 /// <param name="storage">Общее хранилище салона</param>
-public sealed class CustomerRepository(SalonStorage storage) : ICustomerRepository
+public sealed class CustomerRepository(SalonStorage storage)
+    : InMemoryRepository<Customer>(storage, storage.Customers, EntityCopies.Copy), ICustomerRepository
 {
     /// <inheritdoc />
-    public IReadOnlyList<Customer> GetAll()
+    protected override void ApplyChanges(Customer current, Customer saved)
     {
-        lock (storage.SyncRoot)
-        {
-            return storage.Customers.Select(EntityCopies.Copy).ToList();
-        }
+        current.LastName = saved.LastName;
+        current.FirstName = saved.FirstName;
+        current.Patronymic = saved.Patronymic;
+        current.Gender = saved.Gender;
+        current.DateOfBirth = saved.DateOfBirth;
+        current.PhoneNumber = saved.PhoneNumber;
     }
 
     /// <inheritdoc />
-    public Customer? GetById(int id)
+    protected override void CheckDeletion(Customer entity)
     {
-        lock (storage.SyncRoot)
+        if (Storage.Appointments.Any(item => item.Customer.Id == entity.Id))
         {
-            var entity = storage.Customers.FirstOrDefault(item => item.Id == id);
-            return entity is null ? null : EntityCopies.Copy(entity);
+            throw new InvalidOperationException("Объект используется в записях");
         }
     }
 
-    /// <inheritdoc />
-    public Customer Add(Customer entity)
-    {
-        lock (storage.SyncRoot)
-        {
-            var saved = EntityCopies.Copy(entity);
-
-            saved.Id = storage.NextId<Customer>();
-            storage.Customers.Add(saved);
-            return EntityCopies.Copy(saved);
-        }
-    }
-
-    /// <inheritdoc />
-    public bool Update(Customer entity)
-    {
-        lock (storage.SyncRoot)
-        {
-            var current = storage.Customers.FirstOrDefault(item => item.Id == entity.Id);
-            if (current is null)
-            {
-                return false;
-            }
-
-            var saved = EntityCopies.Copy(entity);
-
-            current.LastName = saved.LastName;
-            current.FirstName = saved.FirstName;
-            current.Patronymic = saved.Patronymic;
-            current.Gender = saved.Gender;
-            current.DateOfBirth = saved.DateOfBirth;
-            current.PhoneNumber = saved.PhoneNumber;
-            return true;
-        }
-    }
-
-    /// <inheritdoc />
-    public bool Delete(int id)
-    {
-        lock (storage.SyncRoot)
-        {
-            if (storage.Appointments.Any(item => item.Customer.Id == id))
-            {
-                throw new InvalidOperationException("Объект используется в записях");
-            }
-
-            return storage.Customers.RemoveAll(item => item.Id == id) > 0;
-        }
-    }
 }
