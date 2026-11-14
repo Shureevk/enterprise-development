@@ -100,10 +100,26 @@ public class AppointmentServiceTests
     {
         var service = CreateService();
 
-        Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<KeyNotFoundException>(() =>
             service.Create(CreateRequest(
                 new DateTime(2035, 1, 15, 10, 0, 0),
                 customerId: int.MaxValue)));
+    }
+
+    /// <summary>
+    /// При изменении отсутствующей записи ошибка указывает на саму запись
+    /// </summary>
+    [Fact]
+    public void UpdatingMissingAppointmentReportsAppointmentBeforeRelatedEntities()
+    {
+        var service = CreateService();
+        var request = CreateRequest(
+            new DateTime(2035, 1, 15, 10, 0, 0), customerId: int.MaxValue);
+
+        var error = Assert.Throws<KeyNotFoundException>(() =>
+            service.Update(int.MaxValue, request));
+
+        Assert.Equal("Запись не найдена", error.Message);
     }
 
     /// <summary>

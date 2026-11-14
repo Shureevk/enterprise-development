@@ -45,7 +45,7 @@ public abstract class CrudController<TRequest, TResponse>(
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
-    public ActionResult<TResponse> Create(TRequest request)
+    public virtual ActionResult<TResponse> Create(TRequest request)
     {
         var result = service.Create(request);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);

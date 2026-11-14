@@ -8,6 +8,16 @@ namespace BeautySalon.Domain.Repositories;
 public interface IAppointmentRepository : IRepository<Appointment>
 {
     /// <summary>
+    /// Создать запись по идентификаторам связанных сущностей
+    /// </summary>
+    Appointment Add(AppointmentDetails details);
+
+    /// <summary>
+    /// Обновить запись по идентификаторам связанных сущностей
+    /// </summary>
+    bool Update(int id, AppointmentDetails details);
+
+    /// <summary>
     /// Получить записи посетителя
     /// </summary>
     IReadOnlyList<Appointment> GetByCustomer(int customerId);

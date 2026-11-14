@@ -42,7 +42,7 @@ public sealed class AppointmentService(
     /// <param name="request">Данные записи</param>
     public AppointmentResponse Create(SaveAppointmentRequest request)
     {
-        return ToResponse(appointments.Add(ToEntity(0, request)));
+        return ToResponse(appointments.Add(ToDetails(request)));
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ public sealed class AppointmentService(
     /// <param name="request">Новые данные записи</param>
     public void Update(int id, SaveAppointmentRequest request)
     {
-        if (!appointments.Update(ToEntity(id, request)))
+        if (!appointments.Update(id, ToDetails(request)))
         {
             throw new KeyNotFoundException("Запись не найдена");
         }
@@ -118,7 +118,7 @@ public sealed class AppointmentService(
             .ToList();
     }
 
-    private Appointment ToEntity(int id, SaveAppointmentRequest request)
+    private static AppointmentDetails ToDetails(SaveAppointmentRequest request)
     {
         var start = request.AppointmentDateTime!.Value;
 
@@ -127,18 +127,12 @@ public sealed class AppointmentService(
             throw new ArgumentException("Укажите местные дату и время салона без суффикса Z");
         }
 
-        return new Appointment
-        {
-            Id = id,
-            Customer = customers.GetById(request.CustomerId!.Value)
-                ?? throw new ArgumentException("Посетитель не найден"),
-            Specialist = specialists.GetById(request.SpecialistId!.Value)
-                ?? throw new ArgumentException("Специалист не найден"),
-            Service = services.GetById(request.ServiceId!.Value)
-                ?? throw new ArgumentException("Услуга не найдена"),
-            AppointmentDateTime = start,
-            IsRegularCustomer = request.IsRegularCustomer!.Value
-        };
+        return new AppointmentDetails(
+            request.CustomerId!.Value,
+            request.SpecialistId!.Value,
+            request.ServiceId!.Value,
+            start,
+            request.IsRegularCustomer!.Value);
     }
 
     private static AppointmentResponse ToResponse(Appointment entity)

@@ -15,4 +15,10 @@ namespace BeautySalon.Api.Controllers;
 public sealed class AppointmentsController(
     IAppointmentService service) : CrudController<SaveAppointmentRequest, AppointmentResponse>(service)
 {
+    /// <inheritdoc />
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public override ActionResult<AppointmentResponse> Create(SaveAppointmentRequest request)
+    {
+        return base.Create(request);
+    }
 }

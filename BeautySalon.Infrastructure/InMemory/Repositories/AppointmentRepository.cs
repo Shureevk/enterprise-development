@@ -11,15 +11,47 @@ public sealed class AppointmentRepository(SalonStorage storage)
     : InMemoryRepository<Appointment>(storage, storage.Appointments, EntityCopies.Copy), IAppointmentRepository
 {
     /// <inheritdoc />
+    public Appointment Add(AppointmentDetails details)
+    {
+        return AddPrepared(() => ResolveAppointment(details, null));
+    }
+
+    /// <inheritdoc />
+    public bool Update(int id, AppointmentDetails details)
+    {
+        return UpdatePrepared(id, current => ResolveAppointment(details, current.Id));
+    }
+
+    /// <inheritdoc />
     protected override void PrepareForSave(Appointment saved, Appointment? current)
     {
-        saved.Customer = Storage.Customers.FirstOrDefault(item => item.Id == saved.Customer.Id)
-            ?? throw new ArgumentException("Посетитель не найден");
-        saved.Specialist = Storage.Specialists.FirstOrDefault(item => item.Id == saved.Specialist.Id)
-            ?? throw new ArgumentException("Специалист не найден");
-        saved.Service = Storage.Services.FirstOrDefault(item => item.Id == saved.Service.Id)
-            ?? throw new ArgumentException("Услуга не найдена");
-        ValidateSchedule(saved, current?.Id);
+        var details = new AppointmentDetails(
+            saved.Customer.Id,
+            saved.Specialist.Id,
+            saved.Service.Id,
+            saved.AppointmentDateTime,
+            saved.IsRegularCustomer);
+
+        ApplyChanges(saved, ResolveAppointment(details, current?.Id));
+    }
+
+    private Appointment ResolveAppointment(AppointmentDetails details, int? existingId)
+    {
+        var appointment = new Appointment
+        {
+            Id = existingId ?? 0,
+            Customer = Storage.Customers.FirstOrDefault(item => item.Id == details.CustomerId)
+                ?? throw new KeyNotFoundException("Посетитель не найден"),
+            Specialist = Storage.Specialists.FirstOrDefault(item => item.Id == details.SpecialistId)
+                ?? throw new KeyNotFoundException("Специалист не найден"),
+            Service = Storage.Services.FirstOrDefault(item => item.Id == details.ServiceId)
+                ?? throw new KeyNotFoundException("Услуга не найдена"),
+            AppointmentDateTime = details.Start,
+            IsRegularCustomer = details.IsRegularCustomer
+        };
+
+        ValidateSchedule(appointment, existingId);
+        return appointment;
     }
 
     /// <inheritdoc />

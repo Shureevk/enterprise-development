@@ -36,32 +36,52 @@ public abstract class InMemoryRepository<TEntity>(
     /// <inheritdoc />
     public TEntity Add(TEntity entity)
     {
+        return AddPrepared(() => PrepareCopy(entity, null));
+    }
+
+    /// <inheritdoc />
+    public bool Update(TEntity entity)
+    {
+        return UpdatePrepared(entity.Id, current => PrepareCopy(entity, current));
+    }
+
+    /// <summary>
+    /// Подготовить и добавить сущность под одной блокировкой
+    /// </summary>
+    protected TEntity AddPrepared(Func<TEntity> prepare)
+    {
         lock (Storage.SyncRoot)
         {
-            var saved = copy(entity);
-            PrepareForSave(saved, null);
+            var saved = prepare();
             saved.Id = Storage.NextId<TEntity>();
             entities.Add(saved);
             return copy(saved);
         }
     }
 
-    /// <inheritdoc />
-    public bool Update(TEntity entity)
+    /// <summary>
+    /// Найти и обновить сущность под одной блокировкой
+    /// </summary>
+    protected bool UpdatePrepared(int id, Func<TEntity, TEntity> prepare)
     {
         lock (Storage.SyncRoot)
         {
-            var current = Find(entity.Id);
+            var current = Find(id);
             if (current is null)
             {
                 return false;
             }
 
-            var saved = copy(entity);
-            PrepareForSave(saved, current);
-            ApplyChanges(current, saved);
+            ApplyChanges(current, prepare(current));
             return true;
         }
+    }
+
+    private TEntity PrepareCopy(TEntity entity, TEntity? current)
+    {
+        var saved = copy(entity);
+        PrepareForSave(saved, current);
+        return saved;
     }
 
     /// <inheritdoc />
