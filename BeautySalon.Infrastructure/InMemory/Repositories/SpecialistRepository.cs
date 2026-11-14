@@ -53,4 +53,16 @@ public sealed class SpecialistRepository(SalonStorage storage)
         }
     }
 
+    /// <inheritdoc />
+    public IReadOnlyList<BeautySpecialist> GetByMinimumExperience(int years)
+    {
+        lock (Storage.SyncRoot)
+        {
+            return Storage.Specialists
+                .Where(specialist => specialist.WorkExperience >= years)
+                .OrderBy(specialist => specialist.Id)
+                .Select(EntityCopies.Copy)
+                .ToList();
+        }
+    }
 }

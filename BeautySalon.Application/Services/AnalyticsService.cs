@@ -20,9 +20,7 @@ public sealed class AnalyticsService(
     /// </summary>
     public IReadOnlyList<SpecialistResponse> GetExperiencedSpecialists()
     {
-        return specialists.GetAll()
-            .Where(specialist => specialist.WorkExperience >= 5)
-            .OrderBy(specialist => specialist.Id)
+        return specialists.GetByMinimumExperience(5)
             .Select(specialist => new SpecialistResponse
             {
                 Id = specialist.Id,
@@ -60,16 +58,13 @@ public sealed class AnalyticsService(
         var dayStart = date.ToDateTime(TimeOnly.MinValue);
         var dayEnd = dayStart.AddDays(1);
 
-        var schedule = appointments.GetAll()
-            .Where(appointment => appointment.Specialist.Id == specialistId)
+        var schedule = appointments.GetSchedule(specialistId, dayStart, dayEnd)
             .Select(appointment => new
             {
                 Start = appointment.AppointmentDateTime,
                 End = appointment.AppointmentDateTime.AddMinutes(
                     appointment.Service.DurationMinutes)
             })
-            .Where(interval => interval.Start < dayEnd && interval.End > dayStart)
-            .OrderBy(interval => interval.Start)
             .ToList();
 
         var result = new List<FreeWindowResponse>();
@@ -105,17 +100,13 @@ public sealed class AnalyticsService(
     /// </summary>
     public IReadOnlyList<PopularServiceResponse> GetPopularServices()
     {
-        return appointments.GetAll()
-            .GroupBy(appointment => appointment.Service.Id)
-            .Select(group => new PopularServiceResponse
+        return appointments.GetPopularServices(5)
+            .Select(service => new PopularServiceResponse
             {
-                ServiceId = group.Key,
-                Name = group.First().Service.Name,
-                AppointmentCount = group.Count()
+                ServiceId = service.ServiceId,
+                Name = service.Name,
+                AppointmentCount = service.AppointmentCount
             })
-            .OrderByDescending(service => service.AppointmentCount)
-            .ThenBy(service => service.ServiceId)
-            .Take(5)
             .ToList();
     }
 
@@ -133,15 +124,7 @@ public sealed class AnalyticsService(
 
         var from = asOf.AddMonths(-1);
 
-        var count = appointments.GetAll()
-            .GroupBy(appointment => appointment.Customer.Id)
-            .SelectMany(group => group
-                .OrderBy(appointment => appointment.AppointmentDateTime)
-                .ThenBy(appointment => appointment.Id)
-                .Skip(1))
-            .Count(appointment =>
-                appointment.AppointmentDateTime >= from &&
-                appointment.AppointmentDateTime < asOf);
+        var count = appointments.CountRepeatAppointments(from, asOf);
 
         return new RepeatAppointmentsResponse
         {
@@ -156,15 +139,7 @@ public sealed class AnalyticsService(
     /// </summary>
     public IReadOnlyList<CustomerResponse> GetCustomersWithMultipleSpecialists()
     {
-        return appointments.GetAll()
-            .GroupBy(appointment => appointment.Customer.Id)
-            .Where(group => group
-                .Select(appointment => appointment.Specialist.Id)
-                .Distinct()
-                .Count() > 1)
-            .Select(group => group.First().Customer)
-            .OrderBy(customer => customer.DateOfBirth)
-            .ThenBy(customer => customer.Id)
+        return appointments.GetCustomersWithMultipleSpecialists()
             .Select(customer => new CustomerResponse
             {
                 Id = customer.Id,

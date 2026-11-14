@@ -81,8 +81,7 @@ public sealed class AppointmentService(
             throw new KeyNotFoundException("Посетитель не найден");
         }
 
-        return appointments.GetAll()
-            .Where(appointment => appointment.Customer.Id == id)
+        return appointments.GetByCustomer(id)
             .Select(ToResponse)
             .ToList();
     }
@@ -98,8 +97,7 @@ public sealed class AppointmentService(
             throw new KeyNotFoundException("Специалист не найден");
         }
 
-        return appointments.GetAll()
-            .Where(appointment => appointment.Specialist.Id == id)
+        return appointments.GetBySpecialist(id)
             .Select(ToResponse)
             .ToList();
     }
@@ -115,8 +113,7 @@ public sealed class AppointmentService(
             throw new KeyNotFoundException("Услуга не найдена");
         }
 
-        return appointments.GetAll()
-            .Where(appointment => appointment.Service.Id == id)
+        return appointments.GetByService(id)
             .Select(ToResponse)
             .ToList();
     }

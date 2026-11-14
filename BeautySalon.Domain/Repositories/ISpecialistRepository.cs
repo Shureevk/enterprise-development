@@ -7,4 +7,8 @@ namespace BeautySalon.Domain.Repositories;
 /// </summary>
 public interface ISpecialistRepository : IRepository<BeautySpecialist>
 {
+    /// <summary>
+    /// Получить специалистов со стажем от указанного числа лет
+    /// </summary>
+    IReadOnlyList<BeautySpecialist> GetByMinimumExperience(int years);
 }

@@ -57,4 +57,110 @@ public sealed class AppointmentRepository(SalonStorage storage)
             throw new InvalidOperationException("Посетитель или специалист занят в выбранное время");
         }
     }
+
+    /// <inheritdoc />
+    public IReadOnlyList<Appointment> GetByCustomer(int customerId)
+    {
+        lock (Storage.SyncRoot)
+        {
+            return Storage.Appointments
+                .Where(appointment => appointment.Customer.Id == customerId)
+                .Select(EntityCopies.Copy)
+                .ToList();
+        }
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<Appointment> GetBySpecialist(int specialistId)
+    {
+        lock (Storage.SyncRoot)
+        {
+            return Storage.Appointments
+                .Where(appointment => appointment.Specialist.Id == specialistId)
+                .Select(EntityCopies.Copy)
+                .ToList();
+        }
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<Appointment> GetByService(int serviceId)
+    {
+        lock (Storage.SyncRoot)
+        {
+            return Storage.Appointments
+                .Where(appointment => appointment.Service.Id == serviceId)
+                .Select(EntityCopies.Copy)
+                .ToList();
+        }
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<Appointment> GetSchedule(
+        int specialistId, DateTime from, DateTime to)
+    {
+        lock (Storage.SyncRoot)
+        {
+            return Storage.Appointments
+                .Where(appointment =>
+                    appointment.Specialist.Id == specialistId &&
+                    appointment.AppointmentDateTime < to &&
+                    appointment.AppointmentDateTime.AddMinutes(
+                        appointment.Service.DurationMinutes) > from)
+                .OrderBy(appointment => appointment.AppointmentDateTime)
+                .Select(EntityCopies.Copy)
+                .ToList();
+        }
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<ServicePopularity> GetPopularServices(int limit)
+    {
+        lock (Storage.SyncRoot)
+        {
+            return Storage.Appointments
+                .GroupBy(appointment => appointment.Service.Id)
+                .Select(group => new ServicePopularity(
+                    group.Key, group.First().Service.Name, group.Count()))
+                .OrderByDescending(service => service.AppointmentCount)
+                .ThenBy(service => service.ServiceId)
+                .Take(limit)
+                .ToList();
+        }
+    }
+
+    /// <inheritdoc />
+    public int CountRepeatAppointments(DateTime from, DateTime to)
+    {
+        lock (Storage.SyncRoot)
+        {
+            return Storage.Appointments
+                .GroupBy(appointment => appointment.Customer.Id)
+                .SelectMany(group => group
+                    .OrderBy(appointment => appointment.AppointmentDateTime)
+                    .ThenBy(appointment => appointment.Id)
+                    .Skip(1))
+                .Count(appointment =>
+                    appointment.AppointmentDateTime >= from &&
+                    appointment.AppointmentDateTime < to);
+        }
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<Customer> GetCustomersWithMultipleSpecialists()
+    {
+        lock (Storage.SyncRoot)
+        {
+            return Storage.Appointments
+                .GroupBy(appointment => appointment.Customer.Id)
+                .Where(group => group
+                    .Select(appointment => appointment.Specialist.Id)
+                    .Distinct()
+                    .Count() > 1)
+                .Select(group => group.First().Customer)
+                .OrderBy(customer => customer.DateOfBirth)
+                .ThenBy(customer => customer.Id)
+                .Select(EntityCopies.Copy)
+                .ToList();
+        }
+    }
 }
