@@ -1,5 +1,4 @@
 ﻿using BeautySalon.Contracts.Interfaces;
-
 using BeautySalon.Domain.Shared.Enums;
 
 namespace BeautySalon.Contracts.Specialists;

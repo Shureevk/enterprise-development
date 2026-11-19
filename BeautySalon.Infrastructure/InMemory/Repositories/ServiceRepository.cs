@@ -39,5 +39,4 @@ public sealed class ServiceRepository(SalonStorage storage)
             throw new InvalidOperationException("Объект используется в записях");
         }
     }
-
 }

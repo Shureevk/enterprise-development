@@ -1,5 +1,4 @@
 ﻿using BeautySalon.Contracts.Interfaces;
-using BeautySalon.Application.Services;
 using BeautySalon.Contracts.Analytics;
 using BeautySalon.Contracts.Customers;
 using BeautySalon.Contracts.Specialists;

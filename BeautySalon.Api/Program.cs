@@ -13,12 +13,12 @@ builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 
-var storage = new SalonStorage();
+builder.Services.AddSingleton<SalonStorage>();
 
-builder.Services.AddScoped<ICustomerRepository>(_ => new CustomerRepository(storage));
-builder.Services.AddScoped<ISpecialistRepository>(_ => new SpecialistRepository(storage));
-builder.Services.AddScoped<IServiceRepository>(_ => new ServiceRepository(storage));
-builder.Services.AddScoped<IAppointmentRepository>(_ => new AppointmentRepository(storage));
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ISpecialistRepository, SpecialistRepository>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<ISpecialistService, SpecialistService>();
