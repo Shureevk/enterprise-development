@@ -1,4 +1,5 @@
-﻿using BeautySalon.Domain.Entities;
+using BeautySalon.Infrastructure.SqlServer;
+using BeautySalon.Domain.Entities;
 
 namespace BeautySalon.Infrastructure.InMemory;
 

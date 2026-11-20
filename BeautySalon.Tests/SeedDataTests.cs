@@ -1,4 +1,4 @@
-﻿using BeautySalon.Infrastructure.InMemory;
+using BeautySalon.Infrastructure.SqlServer;
 
 namespace BeautySalon.Tests;
 
