@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="BeautySalon.AppHost/BeautySalon.AppHost.csproj" />
   <Project Path="BeautySalon.Api/BeautySalon.Api.csproj" />
   <Project Path="BeautySalon.Application/BeautySalon.Application.csproj" />
   <Project Path="BeautySalon.Contracts/BeautySalon.Contracts.csproj" />
