@@ -1,7 +1,7 @@
-﻿using BeautySalon.Domain.Entities;
+using BeautySalon.Domain.Entities;
 using BeautySalon.Domain.Repositories;
 
-namespace BeautySalon.Infrastructure.InMemory.Repositories;
+namespace BeautySalon.Tests.Fixtures.InMemory.Repositories;
 
 /// <summary>
 /// Репозиторий сущностей BeautySpecialist
@@ -10,7 +10,6 @@ namespace BeautySalon.Infrastructure.InMemory.Repositories;
 public sealed class SpecialistRepository(SalonStorage storage)
     : InMemoryRepository<BeautySpecialist>(storage, storage.Specialists, EntityCopies.Copy), ISpecialistRepository
 {
-    /// <inheritdoc />
     protected override void PrepareForSave(BeautySpecialist saved, BeautySpecialist? current)
     {
         saved.PassportNumber = string.IsNullOrWhiteSpace(saved.PassportNumber)
@@ -30,7 +29,6 @@ public sealed class SpecialistRepository(SalonStorage storage)
         }
     }
 
-    /// <inheritdoc />
     protected override void ApplyChanges(BeautySpecialist current, BeautySpecialist saved)
     {
         current.LastName = saved.LastName;
@@ -44,7 +42,6 @@ public sealed class SpecialistRepository(SalonStorage storage)
         current.WorkExperience = saved.WorkExperience;
     }
 
-    /// <inheritdoc />
     protected override void CheckDeletion(BeautySpecialist entity)
     {
         if (Storage.Appointments.Any(item => item.Specialist.Id == entity.Id))
@@ -53,7 +50,6 @@ public sealed class SpecialistRepository(SalonStorage storage)
         }
     }
 
-    /// <inheritdoc />
     public IReadOnlyList<BeautySpecialist> GetByMinimumExperience(int years)
     {
         lock (Storage.SyncRoot)
@@ -64,5 +60,11 @@ public sealed class SpecialistRepository(SalonStorage storage)
                 .Select(EntityCopies.Copy)
                 .ToList();
         }
+    }
+
+    Task<IReadOnlyList<BeautySpecialist>> ISpecialistRepository.GetByMinimumExperienceAsync(int years, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(GetByMinimumExperience(years));
     }
 }

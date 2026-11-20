@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Contracts.Interfaces;
 using BeautySalon.Contracts.Customers;
 using BeautySalon.Contracts.Appointments;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +20,12 @@ public sealed class CustomersController(
     /// Получить связанные записи
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
+    /// <param name="cancellationToken">Токен отмены запроса</param>
     [HttpGet("{id:int}/appointments")]
     [ProducesResponseType(typeof(IReadOnlyList<AppointmentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public ActionResult<IReadOnlyList<AppointmentResponse>> GetAppointments(int id)
+    public async Task<ActionResult<IReadOnlyList<AppointmentResponse>>> GetAppointments(int id, CancellationToken cancellationToken)
     {
-        return Ok(appointments.GetByCustomer(id));
+        return Ok(await appointments.GetByCustomerAsync(id, cancellationToken));
     }
 }

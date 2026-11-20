@@ -1,4 +1,4 @@
-﻿using BeautySalon.Domain.Entities;
+using BeautySalon.Domain.Entities;
 
 namespace BeautySalon.Domain.Repositories;
 
@@ -10,45 +10,45 @@ public interface IAppointmentRepository : IRepository<Appointment>
     /// <summary>
     /// Создать запись по идентификаторам связанных сущностей
     /// </summary>
-    Appointment Add(AppointmentDetails details);
+    Task<Appointment> AddAsync(AppointmentDetails details, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Обновить запись по идентификаторам связанных сущностей
     /// </summary>
-    bool Update(int id, AppointmentDetails details);
+    Task<bool> UpdateAsync(int id, AppointmentDetails details, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить записи посетителя
     /// </summary>
-    IReadOnlyList<Appointment> GetByCustomer(int customerId);
+    Task<IReadOnlyList<Appointment>> GetByCustomerAsync(int customerId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить записи специалиста
     /// </summary>
-    IReadOnlyList<Appointment> GetBySpecialist(int specialistId);
+    Task<IReadOnlyList<Appointment>> GetBySpecialistAsync(int specialistId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить записи на услугу
     /// </summary>
-    IReadOnlyList<Appointment> GetByService(int serviceId);
+    Task<IReadOnlyList<Appointment>> GetByServiceAsync(int serviceId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Получить записи специалиста, пересекающие заданный период
+    /// Найти свободные промежутки между записями специалиста
     /// </summary>
-    IReadOnlyList<Appointment> GetSchedule(int specialistId, DateTime from, DateTime to);
+    Task<IReadOnlyList<ScheduleWindow>> GetFreeWindowsAsync(int specialistId, DateTime from, DateTime to, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить самые популярные услуги по количеству записей
     /// </summary>
-    IReadOnlyList<ServicePopularity> GetPopularServices(int limit);
+    Task<IReadOnlyList<ServicePopularity>> GetPopularServicesAsync(int limit, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Посчитать повторные записи с учётом истории до начала периода
     /// </summary>
-    int CountRepeatAppointments(DateTime from, DateTime to);
+    Task<int> CountRepeatAppointmentsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить посетителей нескольких специалистов по дате рождения
     /// </summary>
-    IReadOnlyList<Customer> GetCustomersWithMultipleSpecialists();
+    Task<IReadOnlyList<Customer>> GetCustomersWithMultipleSpecialistsAsync(CancellationToken cancellationToken = default);
 }

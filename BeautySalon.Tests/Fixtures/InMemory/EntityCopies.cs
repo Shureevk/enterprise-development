@@ -1,6 +1,6 @@
-﻿using BeautySalon.Domain.Entities;
+using BeautySalon.Domain.Entities;
 
-namespace BeautySalon.Infrastructure.InMemory;
+namespace BeautySalon.Tests.Fixtures.InMemory;
 
 /// <summary>
 /// Копирование сущностей без передачи изменяемого состояния хранилища

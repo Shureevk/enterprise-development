@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Specialists;
+using BeautySalon.Contracts.Specialists;
 
 namespace BeautySalon.Contracts.Interfaces;
 

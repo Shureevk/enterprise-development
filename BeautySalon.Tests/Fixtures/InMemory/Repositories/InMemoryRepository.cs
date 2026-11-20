@@ -1,7 +1,7 @@
-﻿using BeautySalon.Domain.Entities;
+using BeautySalon.Domain.Entities;
 using BeautySalon.Domain.Repositories;
 
-namespace BeautySalon.Infrastructure.InMemory.Repositories;
+namespace BeautySalon.Tests.Fixtures.InMemory.Repositories;
 
 /// <summary>
 /// Общие операции с сущностями в памяти
@@ -14,7 +14,6 @@ public abstract class InMemoryRepository<TEntity>(
 {
     protected SalonStorage Storage { get; } = storage;
 
-    /// <inheritdoc />
     public IReadOnlyList<TEntity> GetAll()
     {
         lock (Storage.SyncRoot)
@@ -23,7 +22,6 @@ public abstract class InMemoryRepository<TEntity>(
         }
     }
 
-    /// <inheritdoc />
     public TEntity? GetById(int id)
     {
         lock (Storage.SyncRoot)
@@ -33,13 +31,11 @@ public abstract class InMemoryRepository<TEntity>(
         }
     }
 
-    /// <inheritdoc />
     public TEntity Add(TEntity entity)
     {
         return AddPrepared(() => PrepareCopy(entity, null));
     }
 
-    /// <inheritdoc />
     public bool Update(TEntity entity)
     {
         return UpdatePrepared(entity.Id, current => PrepareCopy(entity, current));
@@ -84,7 +80,6 @@ public abstract class InMemoryRepository<TEntity>(
         return saved;
     }
 
-    /// <inheritdoc />
     public bool Delete(int id)
     {
         lock (Storage.SyncRoot)
@@ -122,5 +117,35 @@ public abstract class InMemoryRepository<TEntity>(
     private TEntity? Find(int id)
     {
         return entities.FirstOrDefault(entity => entity.Id == id);
+    }
+
+    Task<IReadOnlyList<TEntity>> IRepository<TEntity>.GetAllAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(GetAll());
+    }
+
+    Task<TEntity?> IRepository<TEntity>.GetByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(GetById(id));
+    }
+
+    Task<TEntity> IRepository<TEntity>.AddAsync(TEntity entity, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(Add(entity));
+    }
+
+    Task<bool> IRepository<TEntity>.UpdateAsync(TEntity entity, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(Update(entity));
+    }
+
+    Task<bool> IRepository<TEntity>.DeleteAsync(int id, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(Delete(id));
     }
 }

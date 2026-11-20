@@ -1,5 +1,5 @@
-﻿using BeautySalon.Infrastructure.InMemory;
-using BeautySalon.Infrastructure.InMemory.Repositories;
+using BeautySalon.Tests.Fixtures.InMemory;
+using BeautySalon.Tests.Fixtures.InMemory.Repositories;
 
 namespace BeautySalon.Tests;
 

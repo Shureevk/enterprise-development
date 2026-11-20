@@ -1,4 +1,4 @@
-﻿using BeautySalon.Domain.Entities;
+using BeautySalon.Domain.Entities;
 
 namespace BeautySalon.Domain.Repositories;
 
@@ -10,5 +10,5 @@ public interface ISpecialistRepository : IRepository<BeautySpecialist>
     /// <summary>
     /// Получить специалистов со стажем от указанного числа лет
     /// </summary>
-    IReadOnlyList<BeautySpecialist> GetByMinimumExperience(int years);
+    Task<IReadOnlyList<BeautySpecialist>> GetByMinimumExperienceAsync(int years, CancellationToken cancellationToken = default);
 }

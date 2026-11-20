@@ -1,7 +1,7 @@
 using BeautySalon.Infrastructure.SqlServer;
 using BeautySalon.Domain.Entities;
 
-namespace BeautySalon.Infrastructure.InMemory;
+namespace BeautySalon.Tests.Fixtures.InMemory;
 
 /// <summary>
 /// Общее состояние салона на время работы приложения

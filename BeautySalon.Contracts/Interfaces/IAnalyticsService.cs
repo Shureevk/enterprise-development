@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Analytics;
+using BeautySalon.Contracts.Analytics;
 using BeautySalon.Contracts.Customers;
 using BeautySalon.Contracts.Specialists;
 
@@ -12,29 +12,31 @@ public interface IAnalyticsService
     /// <summary>
     /// Получить специалистов со стажем не менее пяти лет
     /// </summary>
-    IReadOnlyList<SpecialistResponse> GetExperiencedSpecialists();
+    Task<IReadOnlyList<SpecialistResponse>> GetExperiencedSpecialistsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить промежутки между записями специалиста за день
     /// </summary>
     /// <param name="specialistId">Идентификатор специалиста</param>
     /// <param name="date">День расписания</param>
-    IReadOnlyList<FreeWindowResponse> GetFreeWindows(
-        int specialistId, DateOnly date);
+    /// <param name="cancellationToken">Токен отмены операции</param>
+    Task<IReadOnlyList<FreeWindowResponse>> GetFreeWindowsAsync(
+        int specialistId, DateOnly date, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить пять услуг с наибольшим количеством записей
     /// </summary>
-    IReadOnlyList<PopularServiceResponse> GetPopularServices();
+    Task<IReadOnlyList<PopularServiceResponse>> GetPopularServicesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Посчитать повторные записи за месяц с учётом всей истории посетителя
     /// </summary>
     /// <param name="asOf">Конец периода по местному времени салона</param>
-    RepeatAppointmentsResponse GetRepeatAppointments(DateTime asOf);
+    /// <param name="cancellationToken">Токен отмены операции</param>
+    Task<RepeatAppointmentsResponse> GetRepeatAppointmentsAsync(DateTime asOf, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить посетителей нескольких специалистов по дате рождения
     /// </summary>
-    IReadOnlyList<CustomerResponse> GetCustomersWithMultipleSpecialists();
+    Task<IReadOnlyList<CustomerResponse>> GetCustomersWithMultipleSpecialistsAsync(CancellationToken cancellationToken = default);
 }

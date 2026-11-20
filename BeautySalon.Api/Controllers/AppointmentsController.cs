@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Contracts.Interfaces;
 using BeautySalon.Contracts.Appointments;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +8,6 @@ namespace BeautySalon.Api.Controllers;
 /// HTTP операции для ресурса appointments
 /// </summary>
 /// <param name="service">Сервис приложения</param>
-
 [ApiController]
 [Route("api/appointments")]
 [Produces("application/json")]
@@ -17,8 +16,8 @@ public sealed class AppointmentsController(
 {
     /// <inheritdoc />
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public override ActionResult<AppointmentResponse> Create(SaveAppointmentRequest request)
+    public override Task<ActionResult<AppointmentResponse>> Create(SaveAppointmentRequest request, CancellationToken cancellationToken)
     {
-        return base.Create(request);
+        return base.Create(request, cancellationToken);
     }
 }

@@ -1,4 +1,4 @@
-﻿using BeautySalon.Domain.Entities;
+using BeautySalon.Domain.Entities;
 
 namespace BeautySalon.Domain.Repositories;
 
@@ -10,33 +10,33 @@ public interface IRepository<TEntity> where TEntity : class, IEntity
     /// <summary>
     /// Получить все объекты
     /// </summary>
-    IReadOnlyList<TEntity> GetAll();
+    Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Найти объект по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
     /// <returns>Найденный объект или null</returns>
-    TEntity? GetById(int id);
+    Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Добавить объект и назначить ему идентификатор
     /// </summary>
     /// <param name="entity">Добавляемый объект</param>
     /// <returns>Сохранённый объект</returns>
-    TEntity Add(TEntity entity);
+    Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Обновить существующий объект
     /// </summary>
     /// <param name="entity">Новые данные с идентификатором объекта</param>
     /// <returns>Признак успешного обновления</returns>
-    bool Update(TEntity entity);
+    Task<bool> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Удалить объект по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
     /// <returns>Признак успешного удаления</returns>
-    bool Delete(int id);
+    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,4 @@
-﻿namespace BeautySalon.Contracts.Interfaces;
+namespace BeautySalon.Contracts.Interfaces;
 
 /// <summary>
 /// Общие операции с ресурсом
@@ -8,30 +8,34 @@ public interface ICrudService<TRequest, TResponse>
     /// <summary>
     /// Получить список объектов
     /// </summary>
-    IReadOnlyList<TResponse> GetAll();
+    Task<IReadOnlyList<TResponse>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить объект по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
-    TResponse GetById(int id);
+    /// <param name="cancellationToken">Токен отмены операции</param>
+    Task<TResponse> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Создать объект
     /// </summary>
     /// <param name="request">Данные объекта</param>
-    TResponse Create(TRequest request);
+    /// <param name="cancellationToken">Токен отмены операции</param>
+    Task<TResponse> CreateAsync(TRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Обновить объект
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
     /// <param name="request">Новые данные объекта</param>
-    void Update(int id, TRequest request);
+    /// <param name="cancellationToken">Токен отмены операции</param>
+    Task UpdateAsync(int id, TRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Удалить объект
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
-    void Delete(int id);
+    /// <param name="cancellationToken">Токен отмены операции</param>
+    Task DeleteAsync(int id, CancellationToken cancellationToken = default);
 }

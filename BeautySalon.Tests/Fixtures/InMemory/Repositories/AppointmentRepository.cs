@@ -1,7 +1,7 @@
-﻿using BeautySalon.Domain.Entities;
+using BeautySalon.Domain.Entities;
 using BeautySalon.Domain.Repositories;
 
-namespace BeautySalon.Infrastructure.InMemory.Repositories;
+namespace BeautySalon.Tests.Fixtures.InMemory.Repositories;
 
 /// <summary>
 /// Репозиторий сущностей Appointment
@@ -10,19 +10,16 @@ namespace BeautySalon.Infrastructure.InMemory.Repositories;
 public sealed class AppointmentRepository(SalonStorage storage)
     : InMemoryRepository<Appointment>(storage, storage.Appointments, EntityCopies.Copy), IAppointmentRepository
 {
-    /// <inheritdoc />
     public Appointment Add(AppointmentDetails details)
     {
         return AddPrepared(() => ResolveAppointment(details, null));
     }
 
-    /// <inheritdoc />
     public bool Update(int id, AppointmentDetails details)
     {
         return UpdatePrepared(id, current => ResolveAppointment(details, current.Id));
     }
 
-    /// <inheritdoc />
     protected override void PrepareForSave(Appointment saved, Appointment? current)
     {
         var details = new AppointmentDetails(
@@ -54,7 +51,6 @@ public sealed class AppointmentRepository(SalonStorage storage)
         return appointment;
     }
 
-    /// <inheritdoc />
     protected override void ApplyChanges(Appointment current, Appointment saved)
     {
         current.Customer = saved.Customer;
@@ -90,7 +86,6 @@ public sealed class AppointmentRepository(SalonStorage storage)
         }
     }
 
-    /// <inheritdoc />
     public IReadOnlyList<Appointment> GetByCustomer(int customerId)
     {
         lock (Storage.SyncRoot)
@@ -102,7 +97,6 @@ public sealed class AppointmentRepository(SalonStorage storage)
         }
     }
 
-    /// <inheritdoc />
     public IReadOnlyList<Appointment> GetBySpecialist(int specialistId)
     {
         lock (Storage.SyncRoot)
@@ -114,7 +108,6 @@ public sealed class AppointmentRepository(SalonStorage storage)
         }
     }
 
-    /// <inheritdoc />
     public IReadOnlyList<Appointment> GetByService(int serviceId)
     {
         lock (Storage.SyncRoot)
@@ -126,8 +119,7 @@ public sealed class AppointmentRepository(SalonStorage storage)
         }
     }
 
-    /// <inheritdoc />
-    public IReadOnlyList<Appointment> GetSchedule(
+    private IReadOnlyList<Appointment> GetSchedule(
         int specialistId, DateTime from, DateTime to)
     {
         lock (Storage.SyncRoot)
@@ -144,7 +136,6 @@ public sealed class AppointmentRepository(SalonStorage storage)
         }
     }
 
-    /// <inheritdoc />
     public IReadOnlyList<ServicePopularity> GetPopularServices(int limit)
     {
         lock (Storage.SyncRoot)
@@ -160,7 +151,6 @@ public sealed class AppointmentRepository(SalonStorage storage)
         }
     }
 
-    /// <inheritdoc />
     public int CountRepeatAppointments(DateTime from, DateTime to)
     {
         lock (Storage.SyncRoot)
@@ -177,7 +167,6 @@ public sealed class AppointmentRepository(SalonStorage storage)
         }
     }
 
-    /// <inheritdoc />
     public IReadOnlyList<Customer> GetCustomersWithMultipleSpecialists()
     {
         lock (Storage.SyncRoot)
@@ -194,5 +183,82 @@ public sealed class AppointmentRepository(SalonStorage storage)
                 .Select(EntityCopies.Copy)
                 .ToList();
         }
+    }
+
+    Task<Appointment> IAppointmentRepository.AddAsync(AppointmentDetails details, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(Add(details));
+    }
+
+    Task<bool> IAppointmentRepository.UpdateAsync(int id, AppointmentDetails details, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(Update(id, details));
+    }
+
+    Task<IReadOnlyList<Appointment>> IAppointmentRepository.GetByCustomerAsync(int customerId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(GetByCustomer(customerId));
+    }
+
+    Task<IReadOnlyList<Appointment>> IAppointmentRepository.GetBySpecialistAsync(int specialistId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(GetBySpecialist(specialistId));
+    }
+
+    Task<IReadOnlyList<Appointment>> IAppointmentRepository.GetByServiceAsync(int serviceId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(GetByService(serviceId));
+    }
+
+    Task<IReadOnlyList<ScheduleWindow>> IAppointmentRepository.GetFreeWindowsAsync(
+        int specialistId, DateTime from, DateTime to, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var schedule = GetSchedule(specialistId, from, to);
+        var windows = new List<ScheduleWindow>();
+
+        if (schedule.Count > 0)
+        {
+            var occupiedUntil = schedule[0].AppointmentDateTime.AddMinutes(schedule[0].Service.DurationMinutes);
+            foreach (var appointment in schedule.Skip(1))
+            {
+                var start = appointment.AppointmentDateTime;
+                var end = start.AddMinutes(appointment.Service.DurationMinutes);
+                if (start > occupiedUntil)
+                {
+                    windows.Add(new ScheduleWindow(occupiedUntil, start));
+                }
+
+                if (end > occupiedUntil)
+                {
+                    occupiedUntil = end;
+                }
+            }
+        }
+
+        return Task.FromResult<IReadOnlyList<ScheduleWindow>>(windows);
+    }
+
+    Task<IReadOnlyList<ServicePopularity>> IAppointmentRepository.GetPopularServicesAsync(int limit, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(GetPopularServices(limit));
+    }
+
+    Task<int> IAppointmentRepository.CountRepeatAppointmentsAsync(DateTime from, DateTime to, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(CountRepeatAppointments(from, to));
+    }
+
+    Task<IReadOnlyList<Customer>> IAppointmentRepository.GetCustomersWithMultipleSpecialistsAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(GetCustomersWithMultipleSpecialists());
     }
 }

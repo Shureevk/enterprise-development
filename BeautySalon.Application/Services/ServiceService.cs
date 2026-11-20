@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Contracts.Interfaces;
 using BeautySalon.Contracts.Services;
 using BeautySalon.Domain.Entities;
 using BeautySalon.Domain.Repositories;
@@ -14,18 +14,18 @@ public sealed class ServiceService(IServiceRepository repository) : IServiceServ
     /// <summary>
     /// Получить список объектов
     /// </summary>
-    public IReadOnlyList<ServiceResponse> GetAll()
+    public async Task<IReadOnlyList<ServiceResponse>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return repository.GetAll().Select(ToResponse).ToList();
+        return (await repository.GetAllAsync(cancellationToken)).Select(ToResponse).ToList();
     }
 
     /// <summary>
     /// Получить объект по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
-    public ServiceResponse GetById(int id)
+    public async Task<ServiceResponse> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var entity = repository.GetById(id)
+        var entity = await repository.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException("Объект не найден");
         return ToResponse(entity);
     }
@@ -34,10 +34,10 @@ public sealed class ServiceService(IServiceRepository repository) : IServiceServ
     /// Создать объект
     /// </summary>
     /// <param name="request">Данные объекта</param>
-    public ServiceResponse Create(SaveServiceRequest request)
+    public async Task<ServiceResponse> CreateAsync(SaveServiceRequest request, CancellationToken cancellationToken = default)
     {
         var entity = ToEntity(0, request);
-        return ToResponse(repository.Add(entity));
+        return ToResponse(await repository.AddAsync(entity, cancellationToken));
     }
 
     /// <summary>
@@ -45,10 +45,10 @@ public sealed class ServiceService(IServiceRepository repository) : IServiceServ
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
     /// <param name="request">Новые данные объекта</param>
-    public void Update(int id, SaveServiceRequest request)
+    public async Task UpdateAsync(int id, SaveServiceRequest request, CancellationToken cancellationToken = default)
     {
         var entity = ToEntity(id, request);
-        if (!repository.Update(entity))
+        if (!await repository.UpdateAsync(entity, cancellationToken))
         {
             throw new KeyNotFoundException("Объект не найден");
         }
@@ -58,9 +58,9 @@ public sealed class ServiceService(IServiceRepository repository) : IServiceServ
     /// Удалить объект
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
-    public void Delete(int id)
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        if (!repository.Delete(id))
+        if (!await repository.DeleteAsync(id, cancellationToken))
         {
             throw new KeyNotFoundException("Объект не найден");
         }
@@ -68,13 +68,18 @@ public sealed class ServiceService(IServiceRepository repository) : IServiceServ
 
     private static Service ToEntity(int id, SaveServiceRequest request)
     {
+        var price = request.Price!.Value;
+        if (decimal.Round(price, 2) != price)
+        {
+            throw new ArgumentException("Стоимость услуги указывается с точностью до копейки");
+        }
 
         return new Service
         {
             Id = id,
             Name = request.Name.Trim(),
             Category = request.Category?.Trim(),
-            Price = request.Price!.Value,
+            Price = price,
             DurationMinutes = request.DurationMinutes!.Value,
         };
     }

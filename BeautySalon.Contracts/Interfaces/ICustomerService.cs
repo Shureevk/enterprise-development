@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Customers;
+using BeautySalon.Contracts.Customers;
 
 namespace BeautySalon.Contracts.Interfaces;
 

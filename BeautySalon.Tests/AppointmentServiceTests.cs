@@ -1,7 +1,7 @@
-﻿using BeautySalon.Application.Services;
+using BeautySalon.Application.Services;
 using BeautySalon.Contracts.Appointments;
-using BeautySalon.Infrastructure.InMemory;
-using BeautySalon.Infrastructure.InMemory.Repositories;
+using BeautySalon.Tests.Fixtures.InMemory;
+using BeautySalon.Tests.Fixtures.InMemory.Repositories;
 
 namespace BeautySalon.Tests;
 
@@ -37,41 +37,44 @@ public class AppointmentServiceTests
     /// Занятое время специалиста нельзя забронировать повторно
     /// </summary>
     [Fact]
-    public void SpecialistCannotHaveOverlappingAppointments()
+    public async Task SpecialistCannotHaveOverlappingAppointments()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var service = CreateService();
         var start = new DateTime(2035, 1, 15, 10, 0, 0);
-        service.Create(CreateRequest(start));
+        await service.CreateAsync(CreateRequest(start), cancellationToken);
 
-        Assert.Throws<InvalidOperationException>(() =>
-            service.Create(CreateRequest(start.AddMinutes(30), customerId: 2)));
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.CreateAsync(CreateRequest(start.AddMinutes(30), customerId: 2), cancellationToken));
     }
 
     /// <summary>
     /// Посетитель не может одновременно записаться к двум специалистам
     /// </summary>
     [Fact]
-    public void CustomerCannotHaveOverlappingAppointments()
+    public async Task CustomerCannotHaveOverlappingAppointments()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var service = CreateService();
         var start = new DateTime(2035, 1, 15, 10, 0, 0);
-        service.Create(CreateRequest(start));
+        await service.CreateAsync(CreateRequest(start), cancellationToken);
 
-        Assert.Throws<InvalidOperationException>(() =>
-            service.Create(CreateRequest(start.AddMinutes(30), specialistId: 3)));
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.CreateAsync(CreateRequest(start.AddMinutes(30), specialistId: 3), cancellationToken));
     }
 
     /// <summary>
     /// Следующая запись может начинаться сразу после окончания предыдущей
     /// </summary>
     [Fact]
-    public void AdjacentAppointmentsAreAllowed()
+    public async Task AdjacentAppointmentsAreAllowed()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var service = CreateService();
         var start = new DateTime(2035, 1, 15, 10, 0, 0);
-        service.Create(CreateRequest(start));
+        await service.CreateAsync(CreateRequest(start), cancellationToken);
 
-        var next = service.Create(CreateRequest(start.AddHours(1)));
+        var next = await service.CreateAsync(CreateRequest(start.AddHours(1)), cancellationToken);
 
         Assert.Equal(start.AddHours(1), next.AppointmentDateTime);
     }
@@ -80,44 +83,47 @@ public class AppointmentServiceTests
     /// При обновлении запись не конфликтует сама с собой
     /// </summary>
     [Fact]
-    public void UpdatingAppointmentExcludesItsOwnInterval()
+    public async Task UpdatingAppointmentExcludesItsOwnInterval()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var service = CreateService();
         var request = CreateRequest(new DateTime(2035, 1, 15, 10, 0, 0));
-        var appointment = service.Create(request);
+        var appointment = await service.CreateAsync(request, cancellationToken);
 
-        service.Update(appointment.Id, request);
+        await service.UpdateAsync(appointment.Id, request, cancellationToken);
 
         Assert.Equal(appointment.AppointmentDateTime,
-            service.GetById(appointment.Id).AppointmentDateTime);
+            (await service.GetByIdAsync(appointment.Id, cancellationToken)).AppointmentDateTime);
     }
 
     /// <summary>
     /// Запись нельзя создать для отсутствующего посетителя
     /// </summary>
     [Fact]
-    public void UnknownCustomerIsRejected()
+    public async Task UnknownCustomerIsRejected()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var service = CreateService();
 
-        Assert.Throws<KeyNotFoundException>(() =>
-            service.Create(CreateRequest(
+        await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            service.CreateAsync(CreateRequest(
                 new DateTime(2035, 1, 15, 10, 0, 0),
-                customerId: int.MaxValue)));
+                customerId: int.MaxValue), cancellationToken));
     }
 
     /// <summary>
     /// При изменении отсутствующей записи ошибка указывает на саму запись
     /// </summary>
     [Fact]
-    public void UpdatingMissingAppointmentReportsAppointmentBeforeRelatedEntities()
+    public async Task UpdatingMissingAppointmentReportsAppointmentBeforeRelatedEntities()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var service = CreateService();
         var request = CreateRequest(
             new DateTime(2035, 1, 15, 10, 0, 0), customerId: int.MaxValue);
 
-        var error = Assert.Throws<KeyNotFoundException>(() =>
-            service.Update(int.MaxValue, request));
+        var error = await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            service.UpdateAsync(int.MaxValue, request, cancellationToken));
 
         Assert.Equal("Запись не найдена", error.Message);
     }
@@ -126,18 +132,19 @@ public class AppointmentServiceTests
     /// При одновременной записи одно время получает только один запрос
     /// </summary>
     [Fact]
-    public void ConcurrentRequestsCannotReserveTheSameInterval()
+    public async Task ConcurrentRequestsCannotReserveTheSameInterval()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var service = CreateService();
         var request = CreateRequest(new DateTime(2035, 1, 15, 10, 0, 0));
         var successes = 0;
         var conflicts = 0;
 
-        Parallel.For(0, 8, _ =>
+        await Parallel.ForEachAsync(Enumerable.Range(0, 8), cancellationToken, async (_, requestCancellation) =>
         {
             try
             {
-                service.Create(request);
+                await service.CreateAsync(request, requestCancellation);
                 Interlocked.Increment(ref successes);
             }
             catch (InvalidOperationException)

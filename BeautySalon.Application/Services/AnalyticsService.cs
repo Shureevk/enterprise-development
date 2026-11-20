@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Contracts.Interfaces;
 using BeautySalon.Contracts.Analytics;
 using BeautySalon.Contracts.Customers;
 using BeautySalon.Contracts.Specialists;
@@ -18,9 +18,9 @@ public sealed class AnalyticsService(
     /// <summary>
     /// Получить специалистов со стажем не менее пяти лет
     /// </summary>
-    public IReadOnlyList<SpecialistResponse> GetExperiencedSpecialists()
+    public async Task<IReadOnlyList<SpecialistResponse>> GetExperiencedSpecialistsAsync(CancellationToken cancellationToken = default)
     {
-        return specialists.GetByMinimumExperience(5)
+        return (await specialists.GetByMinimumExperienceAsync(5, cancellationToken))
             .Select(specialist => new SpecialistResponse
             {
                 Id = specialist.Id,
@@ -42,10 +42,10 @@ public sealed class AnalyticsService(
     /// </summary>
     /// <param name="specialistId">Идентификатор специалиста</param>
     /// <param name="date">День расписания</param>
-    public IReadOnlyList<FreeWindowResponse> GetFreeWindows(
-        int specialistId, DateOnly date)
+    public async Task<IReadOnlyList<FreeWindowResponse>> GetFreeWindowsAsync(
+        int specialistId, DateOnly date, CancellationToken cancellationToken = default)
     {
-        if (specialists.GetById(specialistId) is null)
+        if (await specialists.GetByIdAsync(specialistId, cancellationToken) is null)
         {
             throw new KeyNotFoundException("Специалист не найден");
         }
@@ -58,49 +58,20 @@ public sealed class AnalyticsService(
         var dayStart = date.ToDateTime(TimeOnly.MinValue);
         var dayEnd = dayStart.AddDays(1);
 
-        var schedule = appointments.GetSchedule(specialistId, dayStart, dayEnd)
-            .Select(appointment => new
-            {
-                Start = appointment.AppointmentDateTime,
-                End = appointment.AppointmentDateTime.AddMinutes(
-                    appointment.Service.DurationMinutes)
-            })
-            .ToList();
-
-        var result = new List<FreeWindowResponse>();
-        if (schedule.Count < 2)
+        var windows = await appointments.GetFreeWindowsAsync(specialistId, dayStart, dayEnd, cancellationToken);
+        return windows.Select(window => new FreeWindowResponse
         {
-            return result;
-        }
-
-        var occupiedUntil = schedule[0].End;
-
-        foreach (var interval in schedule.Skip(1))
-        {
-            if (interval.Start > occupiedUntil)
-            {
-                result.Add(new FreeWindowResponse
-                {
-                    Start = occupiedUntil,
-                    End = interval.Start
-                });
-            }
-
-            if (interval.End > occupiedUntil)
-            {
-                occupiedUntil = interval.End;
-            }
-        }
-
-        return result;
+            Start = window.Start,
+            End = window.End
+        }).ToList();
     }
 
     /// <summary>
     /// Получить пять услуг с наибольшим количеством записей
     /// </summary>
-    public IReadOnlyList<PopularServiceResponse> GetPopularServices()
+    public async Task<IReadOnlyList<PopularServiceResponse>> GetPopularServicesAsync(CancellationToken cancellationToken = default)
     {
-        return appointments.GetPopularServices(5)
+        return (await appointments.GetPopularServicesAsync(5, cancellationToken))
             .Select(service => new PopularServiceResponse
             {
                 ServiceId = service.ServiceId,
@@ -114,7 +85,7 @@ public sealed class AnalyticsService(
     /// Посчитать повторные записи за месяц с учётом всей истории посетителя
     /// </summary>
     /// <param name="asOf">Конец периода по местному времени салона</param>
-    public RepeatAppointmentsResponse GetRepeatAppointments(DateTime asOf)
+    public async Task<RepeatAppointmentsResponse> GetRepeatAppointmentsAsync(DateTime asOf, CancellationToken cancellationToken = default)
     {
         if (asOf < DateTime.MinValue.AddMonths(1) ||
             asOf.Kind == DateTimeKind.Utc)
@@ -124,7 +95,7 @@ public sealed class AnalyticsService(
 
         var from = asOf.AddMonths(-1);
 
-        var count = appointments.CountRepeatAppointments(from, asOf);
+        var count = await appointments.CountRepeatAppointmentsAsync(from, asOf, cancellationToken);
 
         return new RepeatAppointmentsResponse
         {
@@ -137,9 +108,9 @@ public sealed class AnalyticsService(
     /// <summary>
     /// Получить посетителей нескольких специалистов по дате рождения
     /// </summary>
-    public IReadOnlyList<CustomerResponse> GetCustomersWithMultipleSpecialists()
+    public async Task<IReadOnlyList<CustomerResponse>> GetCustomersWithMultipleSpecialistsAsync(CancellationToken cancellationToken = default)
     {
-        return appointments.GetCustomersWithMultipleSpecialists()
+        return (await appointments.GetCustomersWithMultipleSpecialistsAsync(cancellationToken))
             .Select(customer => new CustomerResponse
             {
                 Id = customer.Id,

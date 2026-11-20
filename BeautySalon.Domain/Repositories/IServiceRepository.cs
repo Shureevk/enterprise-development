@@ -1,4 +1,4 @@
-﻿using BeautySalon.Domain.Entities;
+using BeautySalon.Domain.Entities;
 
 namespace BeautySalon.Domain.Repositories;
 

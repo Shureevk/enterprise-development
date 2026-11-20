@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Appointments;
+using BeautySalon.Contracts.Appointments;
 
 namespace BeautySalon.Contracts.Interfaces;
 
@@ -11,17 +11,20 @@ public interface IAppointmentService : ICrudService<SaveAppointmentRequest, Appo
     /// Получить записи посетителя
     /// </summary>
     /// <param name="id">Идентификатор посетителя</param>
-    IReadOnlyList<AppointmentResponse> GetByCustomer(int id);
+    /// <param name="cancellationToken">Токен отмены операции</param>
+    Task<IReadOnlyList<AppointmentResponse>> GetByCustomerAsync(int id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить записи специалиста
     /// </summary>
     /// <param name="id">Идентификатор специалиста</param>
-    IReadOnlyList<AppointmentResponse> GetBySpecialist(int id);
+    /// <param name="cancellationToken">Токен отмены операции</param>
+    Task<IReadOnlyList<AppointmentResponse>> GetBySpecialistAsync(int id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получить записи на услугу
     /// </summary>
     /// <param name="id">Идентификатор услуги</param>
-    IReadOnlyList<AppointmentResponse> GetByService(int id);
+    /// <param name="cancellationToken">Токен отмены операции</param>
+    Task<IReadOnlyList<AppointmentResponse>> GetByServiceAsync(int id, CancellationToken cancellationToken = default);
 }

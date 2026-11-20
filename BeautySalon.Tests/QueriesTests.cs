@@ -1,7 +1,7 @@
-﻿using BeautySalon.Application.Services;
+using BeautySalon.Application.Services;
 using BeautySalon.Domain.Entities;
-using BeautySalon.Infrastructure.InMemory;
-using BeautySalon.Infrastructure.InMemory.Repositories;
+using BeautySalon.Tests.Fixtures.InMemory;
+using BeautySalon.Tests.Fixtures.InMemory.Repositories;
 
 namespace BeautySalon.Tests;
 
@@ -56,11 +56,12 @@ public class QueriesTests
     /// Отбор включает стаж ровно пять лет и исключает меньший стаж
     /// </summary>
     [Fact]
-    public void ExperiencedSpecialistsIncludeFiveYearsBoundary()
+    public async Task ExperiencedSpecialistsIncludeFiveYearsBoundary()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var data = new TestData();
 
-        var result = data.Analytics.GetExperiencedSpecialists();
+        var result = await data.Analytics.GetExperiencedSpecialistsAsync(cancellationToken);
 
         Assert.Equal(
             new[] { 2, 3, 4, 5, 7, 8, 9 },
@@ -73,8 +74,9 @@ public class QueriesTests
     /// Окна учитывают длительность услуги и выбранное расписание
     /// </summary>
     [Fact]
-    public void FreeWindowsUseServiceEndAndSelectedSchedule()
+    public async Task FreeWindowsUseServiceEndAndSelectedSchedule()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var data = new TestData();
         var day = new DateTime(2035, 3, 10);
 
@@ -85,8 +87,8 @@ public class QueriesTests
         data.Add(day.AddHours(11), customerId: 2, specialistId: 3);
         data.Add(day.AddDays(1).AddHours(11));
 
-        var result = data.Analytics.GetFreeWindows(
-            2, DateOnly.FromDateTime(day));
+        var result = await data.Analytics.GetFreeWindowsAsync(
+            2, DateOnly.FromDateTime(day), cancellationToken);
 
         Assert.Equal(2, result.Count);
         Assert.Equal(day.AddHours(10).AddMinutes(30), result[0].Start);
@@ -101,15 +103,16 @@ public class QueriesTests
     /// Между соседними записями без промежутка окна нет
     /// </summary>
     [Fact]
-    public void AdjacentAppointmentsDoNotProduceFreeWindow()
+    public async Task AdjacentAppointmentsDoNotProduceFreeWindow()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var data = new TestData();
         var start = new DateTime(2035, 3, 10, 9, 0, 0);
         data.Add(start);
         data.Add(start.AddHours(1));
 
-        var result = data.Analytics.GetFreeWindows(
-            2, DateOnly.FromDateTime(start));
+        var result = await data.Analytics.GetFreeWindowsAsync(
+            2, DateOnly.FromDateTime(start), cancellationToken);
 
         Assert.Empty(result);
     }
@@ -118,21 +121,23 @@ public class QueriesTests
     /// Расписание отсутствующего специалиста нельзя получить
     /// </summary>
     [Fact]
-    public void UnknownSpecialistIsRejected()
+    public async Task UnknownSpecialistIsRejected()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var data = new TestData();
 
-        Assert.Throws<KeyNotFoundException>(() =>
-            data.Analytics.GetFreeWindows(
-                int.MaxValue, new DateOnly(2035, 3, 10)));
+        await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            data.Analytics.GetFreeWindowsAsync(
+                int.MaxValue, new DateOnly(2035, 3, 10), cancellationToken));
     }
 
     /// <summary>
     /// Популярные услуги ограничены пятью и имеют устойчивый порядок
     /// </summary>
     [Fact]
-    public void PopularServicesAreOrderedByCountThenIdentifier()
+    public async Task PopularServicesAreOrderedByCountThenIdentifier()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var data = new TestData();
         var counts = new[] { 3, 4, 1, 3, 2, 1 };
         var day = new DateTime(2035, 4, 1);
@@ -146,7 +151,7 @@ public class QueriesTests
             }
         }
 
-        var result = data.Analytics.GetPopularServices();
+        var result = await data.Analytics.GetPopularServicesAsync(cancellationToken);
 
         Assert.Equal(new[] { 2, 1, 4, 5, 3 },
             result.Select(service => service.ServiceId));
@@ -159,8 +164,9 @@ public class QueriesTests
     /// Первый визит до месяца не исключает повторные записи внутри месяца
     /// </summary>
     [Fact]
-    public void RepeatAppointmentsUseHistoryBeforePeriod()
+    public async Task RepeatAppointmentsUseHistoryBeforePeriod()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var data = new TestData();
 
         data.Add(new DateTime(2035, 1, 10, 10, 0, 0));
@@ -168,8 +174,8 @@ public class QueriesTests
         data.Add(new DateTime(2035, 2, 15, 10, 0, 0));
         data.Add(new DateTime(2035, 2, 20, 10, 0, 0), customerId: 2);
 
-        var result = data.Analytics.GetRepeatAppointments(
-            new DateTime(2035, 3, 1));
+        var result = await data.Analytics.GetRepeatAppointmentsAsync(
+            new DateTime(2035, 3, 1), cancellationToken);
 
         Assert.Equal(2, result.Count);
         Assert.Equal(new DateTime(2035, 2, 1), result.From);
@@ -180,8 +186,9 @@ public class QueriesTests
     /// Начало отчётного периода включается а конец исключается
     /// </summary>
     [Fact]
-    public void RepeatAppointmentsRespectPeriodBoundaries()
+    public async Task RepeatAppointmentsRespectPeriodBoundaries()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var data = new TestData();
 
         data.Add(new DateTime(2035, 1, 1, 10, 0, 0));
@@ -190,8 +197,8 @@ public class QueriesTests
         data.Add(new DateTime(2035, 2, 28, 23, 0, 0));
         data.Add(new DateTime(2035, 3, 1));
 
-        var result = data.Analytics.GetRepeatAppointments(
-            new DateTime(2035, 3, 1));
+        var result = await data.Analytics.GetRepeatAppointmentsAsync(
+            new DateTime(2035, 3, 1), cancellationToken);
 
         Assert.Equal(2, result.Count);
     }
@@ -200,8 +207,9 @@ public class QueriesTests
     /// Несколько записей к одному специалисту не заменяют разных специалистов
     /// </summary>
     [Fact]
-    public void CustomersWithMultipleSpecialistsAreOrderedByBirthDate()
+    public async Task CustomersWithMultipleSpecialistsAreOrderedByBirthDate()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var data = new TestData();
         var day = new DateTime(2035, 5, 1);
 
@@ -214,7 +222,7 @@ public class QueriesTests
         data.Add(day.AddHours(11), customerId: 9, specialistId: 2);
         data.Add(day.AddDays(1).AddHours(11), customerId: 9, specialistId: 3);
 
-        var result = data.Analytics.GetCustomersWithMultipleSpecialists();
+        var result = await data.Analytics.GetCustomersWithMultipleSpecialistsAsync(cancellationToken);
 
         Assert.Equal(new[] { 9, 2 }, result.Select(customer => customer.Id));
         Assert.Equal(data.Customers.GetById(9)!.DateOfBirth, result[0].DateOfBirth);
@@ -224,14 +232,15 @@ public class QueriesTests
     /// Без записей аналитика возвращает пустые результаты и нулевой счётчик
     /// </summary>
     [Fact]
-    public void EmptyScheduleProducesEmptyAnalytics()
+    public async Task EmptyScheduleProducesEmptyAnalytics()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var data = new TestData();
 
-        Assert.Empty(data.Analytics.GetPopularServices());
-        Assert.Empty(data.Analytics.GetCustomersWithMultipleSpecialists());
-        Assert.Empty(data.Analytics.GetFreeWindows(2, new DateOnly(2035, 3, 10)));
-        Assert.Equal(0, data.Analytics.GetRepeatAppointments(
-            new DateTime(2035, 3, 1)).Count);
+        Assert.Empty(await data.Analytics.GetPopularServicesAsync(cancellationToken));
+        Assert.Empty(await data.Analytics.GetCustomersWithMultipleSpecialistsAsync(cancellationToken));
+        Assert.Empty(await data.Analytics.GetFreeWindowsAsync(2, new DateOnly(2035, 3, 10), cancellationToken));
+        Assert.Equal(0, (await data.Analytics.GetRepeatAppointmentsAsync(
+            new DateTime(2035, 3, 1), cancellationToken)).Count);
     }
 }

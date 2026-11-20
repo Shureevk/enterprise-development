@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Contracts.Interfaces;
 using BeautySalon.Contracts.Customers;
 using BeautySalon.Domain.Entities;
 using BeautySalon.Domain.Repositories;
@@ -14,18 +14,18 @@ public sealed class CustomerService(ICustomerRepository repository) : ICustomerS
     /// <summary>
     /// Получить список объектов
     /// </summary>
-    public IReadOnlyList<CustomerResponse> GetAll()
+    public async Task<IReadOnlyList<CustomerResponse>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return repository.GetAll().Select(ToResponse).ToList();
+        return (await repository.GetAllAsync(cancellationToken)).Select(ToResponse).ToList();
     }
 
     /// <summary>
     /// Получить объект по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
-    public CustomerResponse GetById(int id)
+    public async Task<CustomerResponse> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var entity = repository.GetById(id)
+        var entity = await repository.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException("Объект не найден");
         return ToResponse(entity);
     }
@@ -34,10 +34,10 @@ public sealed class CustomerService(ICustomerRepository repository) : ICustomerS
     /// Создать объект
     /// </summary>
     /// <param name="request">Данные объекта</param>
-    public CustomerResponse Create(SaveCustomerRequest request)
+    public async Task<CustomerResponse> CreateAsync(SaveCustomerRequest request, CancellationToken cancellationToken = default)
     {
         var entity = ToEntity(0, request);
-        return ToResponse(repository.Add(entity));
+        return ToResponse(await repository.AddAsync(entity, cancellationToken));
     }
 
     /// <summary>
@@ -45,10 +45,10 @@ public sealed class CustomerService(ICustomerRepository repository) : ICustomerS
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
     /// <param name="request">Новые данные объекта</param>
-    public void Update(int id, SaveCustomerRequest request)
+    public async Task UpdateAsync(int id, SaveCustomerRequest request, CancellationToken cancellationToken = default)
     {
         var entity = ToEntity(id, request);
-        if (!repository.Update(entity))
+        if (!await repository.UpdateAsync(entity, cancellationToken))
         {
             throw new KeyNotFoundException("Объект не найден");
         }
@@ -58,9 +58,9 @@ public sealed class CustomerService(ICustomerRepository repository) : ICustomerS
     /// Удалить объект
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
-    public void Delete(int id)
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        if (!repository.Delete(id))
+        if (!await repository.DeleteAsync(id, cancellationToken))
         {
             throw new KeyNotFoundException("Объект не найден");
         }

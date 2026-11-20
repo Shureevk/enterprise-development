@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Contracts.Interfaces;
 using BeautySalon.Contracts.Appointments;
 using BeautySalon.Domain.Entities;
 using BeautySalon.Domain.Repositories;
@@ -21,18 +21,18 @@ public sealed class AppointmentService(
     /// <summary>
     /// Получить все записи
     /// </summary>
-    public IReadOnlyList<AppointmentResponse> GetAll()
+    public async Task<IReadOnlyList<AppointmentResponse>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return appointments.GetAll().Select(ToResponse).ToList();
+        return (await appointments.GetAllAsync(cancellationToken)).Select(ToResponse).ToList();
     }
 
     /// <summary>
     /// Получить запись по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор записи</param>
-    public AppointmentResponse GetById(int id)
+    public async Task<AppointmentResponse> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return ToResponse(appointments.GetById(id)
+        return ToResponse(await appointments.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException("Запись не найдена"));
     }
 
@@ -40,9 +40,9 @@ public sealed class AppointmentService(
     /// Создать запись
     /// </summary>
     /// <param name="request">Данные записи</param>
-    public AppointmentResponse Create(SaveAppointmentRequest request)
+    public async Task<AppointmentResponse> CreateAsync(SaveAppointmentRequest request, CancellationToken cancellationToken = default)
     {
-        return ToResponse(appointments.Add(ToDetails(request)));
+        return ToResponse(await appointments.AddAsync(ToDetails(request), cancellationToken));
     }
 
     /// <summary>
@@ -50,9 +50,9 @@ public sealed class AppointmentService(
     /// </summary>
     /// <param name="id">Идентификатор записи</param>
     /// <param name="request">Новые данные записи</param>
-    public void Update(int id, SaveAppointmentRequest request)
+    public async Task UpdateAsync(int id, SaveAppointmentRequest request, CancellationToken cancellationToken = default)
     {
-        if (!appointments.Update(id, ToDetails(request)))
+        if (!await appointments.UpdateAsync(id, ToDetails(request), cancellationToken))
         {
             throw new KeyNotFoundException("Запись не найдена");
         }
@@ -62,9 +62,9 @@ public sealed class AppointmentService(
     /// Удалить запись
     /// </summary>
     /// <param name="id">Идентификатор записи</param>
-    public void Delete(int id)
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        if (!appointments.Delete(id))
+        if (!await appointments.DeleteAsync(id, cancellationToken))
         {
             throw new KeyNotFoundException("Запись не найдена");
         }
@@ -74,14 +74,14 @@ public sealed class AppointmentService(
     /// Получить записи посетителя
     /// </summary>
     /// <param name="id">Идентификатор посетителя</param>
-    public IReadOnlyList<AppointmentResponse> GetByCustomer(int id)
+    public async Task<IReadOnlyList<AppointmentResponse>> GetByCustomerAsync(int id, CancellationToken cancellationToken = default)
     {
-        if (customers.GetById(id) is null)
+        if (await customers.GetByIdAsync(id, cancellationToken) is null)
         {
             throw new KeyNotFoundException("Посетитель не найден");
         }
 
-        return appointments.GetByCustomer(id)
+        return (await appointments.GetByCustomerAsync(id, cancellationToken))
             .Select(ToResponse)
             .ToList();
     }
@@ -90,14 +90,14 @@ public sealed class AppointmentService(
     /// Получить записи специалиста
     /// </summary>
     /// <param name="id">Идентификатор специалиста</param>
-    public IReadOnlyList<AppointmentResponse> GetBySpecialist(int id)
+    public async Task<IReadOnlyList<AppointmentResponse>> GetBySpecialistAsync(int id, CancellationToken cancellationToken = default)
     {
-        if (specialists.GetById(id) is null)
+        if (await specialists.GetByIdAsync(id, cancellationToken) is null)
         {
             throw new KeyNotFoundException("Специалист не найден");
         }
 
-        return appointments.GetBySpecialist(id)
+        return (await appointments.GetBySpecialistAsync(id, cancellationToken))
             .Select(ToResponse)
             .ToList();
     }
@@ -106,14 +106,14 @@ public sealed class AppointmentService(
     /// Получить записи на услугу
     /// </summary>
     /// <param name="id">Идентификатор услуги</param>
-    public IReadOnlyList<AppointmentResponse> GetByService(int id)
+    public async Task<IReadOnlyList<AppointmentResponse>> GetByServiceAsync(int id, CancellationToken cancellationToken = default)
     {
-        if (services.GetById(id) is null)
+        if (await services.GetByIdAsync(id, cancellationToken) is null)
         {
             throw new KeyNotFoundException("Услуга не найдена");
         }
 
-        return appointments.GetByService(id)
+        return (await appointments.GetByServiceAsync(id, cancellationToken))
             .Select(ToResponse)
             .ToList();
     }

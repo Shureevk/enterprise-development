@@ -1,4 +1,4 @@
-﻿using BeautySalon.Contracts.Interfaces;
+using BeautySalon.Contracts.Interfaces;
 using BeautySalon.Contracts.Analytics;
 using BeautySalon.Contracts.Customers;
 using BeautySalon.Contracts.Specialists;
@@ -20,9 +20,9 @@ public sealed class AnalyticsController(IAnalyticsService service) : ControllerB
     /// </summary>
     [HttpGet("experienced-specialists")]
     [ProducesResponseType(typeof(IReadOnlyList<SpecialistResponse>), StatusCodes.Status200OK)]
-    public ActionResult<IReadOnlyList<SpecialistResponse>> GetExperiencedSpecialists()
+    public async Task<ActionResult<IReadOnlyList<SpecialistResponse>>> GetExperiencedSpecialists(CancellationToken cancellationToken)
     {
-        return Ok(service.GetExperiencedSpecialists());
+        return Ok(await service.GetExperiencedSpecialistsAsync(cancellationToken));
     }
 
     /// <summary>
@@ -30,14 +30,15 @@ public sealed class AnalyticsController(IAnalyticsService service) : ControllerB
     /// </summary>
     /// <param name="specialistId">Идентификатор специалиста</param>
     /// <param name="date">День расписания</param>
+    /// <param name="cancellationToken">Токен отмены запроса</param>
     [HttpGet("specialists/{specialistId:int}/free-windows")]
     [ProducesResponseType(typeof(IReadOnlyList<FreeWindowResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public ActionResult<IReadOnlyList<FreeWindowResponse>> GetFreeWindows(
-        int specialistId, [FromQuery] DateOnly date)
+    public async Task<ActionResult<IReadOnlyList<FreeWindowResponse>>> GetFreeWindows(
+        int specialistId, [FromQuery] DateOnly date, CancellationToken cancellationToken)
     {
-        return Ok(service.GetFreeWindows(specialistId, date));
+        return Ok(await service.GetFreeWindowsAsync(specialistId, date, cancellationToken));
     }
 
     /// <summary>
@@ -45,22 +46,23 @@ public sealed class AnalyticsController(IAnalyticsService service) : ControllerB
     /// </summary>
     [HttpGet("popular-services")]
     [ProducesResponseType(typeof(IReadOnlyList<PopularServiceResponse>), StatusCodes.Status200OK)]
-    public ActionResult<IReadOnlyList<PopularServiceResponse>> GetPopularServices()
+    public async Task<ActionResult<IReadOnlyList<PopularServiceResponse>>> GetPopularServices(CancellationToken cancellationToken)
     {
-        return Ok(service.GetPopularServices());
+        return Ok(await service.GetPopularServicesAsync(cancellationToken));
     }
 
     /// <summary>
     /// Получить количество повторных записей за последний месяц
     /// </summary>
     /// <param name="asOf">Конец периода или текущее время при отсутствии параметра</param>
+    /// <param name="cancellationToken">Токен отмены запроса</param>
     [HttpGet("repeat-appointments")]
     [ProducesResponseType(typeof(RepeatAppointmentsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public ActionResult<RepeatAppointmentsResponse> GetRepeatAppointments(
-        [FromQuery] DateTime? asOf)
+    public async Task<ActionResult<RepeatAppointmentsResponse>> GetRepeatAppointments(
+        [FromQuery] DateTime? asOf, CancellationToken cancellationToken)
     {
-        return Ok(service.GetRepeatAppointments(asOf ?? DateTime.Now));
+        return Ok(await service.GetRepeatAppointmentsAsync(asOf ?? DateTime.Now, cancellationToken));
     }
 
     /// <summary>
@@ -68,8 +70,8 @@ public sealed class AnalyticsController(IAnalyticsService service) : ControllerB
     /// </summary>
     [HttpGet("customers-with-multiple-specialists")]
     [ProducesResponseType(typeof(IReadOnlyList<CustomerResponse>), StatusCodes.Status200OK)]
-    public ActionResult<IReadOnlyList<CustomerResponse>> GetCustomersWithMultipleSpecialists()
+    public async Task<ActionResult<IReadOnlyList<CustomerResponse>>> GetCustomersWithMultipleSpecialists(CancellationToken cancellationToken)
     {
-        return Ok(service.GetCustomersWithMultipleSpecialists());
+        return Ok(await service.GetCustomersWithMultipleSpecialistsAsync(cancellationToken));
     }
 }
